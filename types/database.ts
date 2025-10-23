@@ -188,6 +188,129 @@ export interface Database {
           created_at?: string;
         };
       };
+      splits: {
+        Row: {
+          id: string;
+          created_by: string;
+          description: string;
+          total_amount: number;
+          status: string;
+          group_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          created_by: string;
+          description: string;
+          total_amount: number;
+          status?: string;
+          group_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          created_by?: string;
+          description?: string;
+          total_amount?: number;
+          status?: string;
+          group_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      split_participants: {
+        Row: {
+          id: string;
+          split_id: string;
+          name: string;
+          phone: string;
+          amount: number;
+          payment_link: string;
+          status: string;
+          user_id: string | null;
+          payment_intent_id: string | null;
+          error_message: string | null;
+          paid_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          split_id: string;
+          name: string;
+          phone: string;
+          amount: number;
+          payment_link: string;
+          status?: string;
+          user_id?: string | null;
+          payment_intent_id?: string | null;
+          error_message?: string | null;
+          paid_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          split_id?: string;
+          name?: string;
+          phone?: string;
+          amount?: number;
+          payment_link?: string;
+          status?: string;
+          user_id?: string | null;
+          payment_intent_id?: string | null;
+          error_message?: string | null;
+          paid_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      split_payments: {
+        Row: {
+          id: string;
+          split_id: string;
+          participant_id: string;
+          amount: number;
+          payment_method: string;
+          status: string;
+          payment_intent_id: string | null;
+          provider_payment_id: string | null;
+          error_message: string | null;
+          metadata: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          split_id: string;
+          participant_id: string;
+          amount: number;
+          payment_method: string;
+          status?: string;
+          payment_intent_id?: string | null;
+          provider_payment_id?: string | null;
+          error_message?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          split_id?: string;
+          participant_id?: string;
+          amount?: number;
+          payment_method?: string;
+          status?: string;
+          payment_intent_id?: string | null;
+          provider_payment_id?: string | null;
+          error_message?: string | null;
+          metadata?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 }

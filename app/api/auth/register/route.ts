@@ -55,6 +55,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // In development mode, auto-confirm email
+    if (process.env.NODE_ENV === "development" && !authData.user.email_confirmed_at) {
+      console.warn("⚠️  Development mode: Auto-confirming user email");
+      const { error: confirmError } = await adminSupabase.auth.admin.updateUserById(
+        authData.user.id,
+        { email_confirm: true }
+      );
+      
+      if (confirmError) {
+        console.error("Email confirmation error:", confirmError);
+      } else {
+        console.log("✅ Email auto-confirmed in development mode");
+      }
+    }
+
     // Create user profile in our database
     const { error: profileError } = await adminSupabase
       .from("users")

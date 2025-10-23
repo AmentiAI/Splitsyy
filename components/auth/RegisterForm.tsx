@@ -78,20 +78,32 @@ export default function RegisterForm({ redirectTo = "/dashboard" }: RegisterForm
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white shadow-md rounded-lg p-8 text-center">
           <div className="mb-4">
-            <svg className="mx-auto h-12 w-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            <svg className="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h2>
-          <p className="text-gray-600 mb-6">
-            Your account has been created successfully. Please check your email to confirm your account.
-          </p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Account Created Successfully!</h2>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
+            <div className="flex items-start">
+              <svg className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <div className="text-sm text-blue-800">
+                <p className="font-semibold mb-1">Check your email</p>
+                <p>We&apos;ve sent a confirmation link to <strong>{formData.email}</strong></p>
+                <p className="mt-2">Click the link in the email to verify your account before signing in.</p>
+              </div>
+            </div>
+          </div>
           <button
             onClick={() => router.push("/auth/login")}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium transition-colors"
           >
-            Go to Sign In
+            Continue to Sign In
           </button>
+          <p className="mt-4 text-xs text-gray-500">
+            Didn&apos;t receive the email? Check your spam folder or contact support.
+          </p>
         </div>
       </div>
     );
@@ -103,8 +115,9 @@ export default function RegisterForm({ redirectTo = "/dashboard" }: RegisterForm
         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
+            <div className="font-semibold mb-1">Error</div>
+            <div className="text-sm whitespace-pre-line">{error}</div>
           </div>
         )}
 
@@ -246,3 +259,4 @@ export default function RegisterForm({ redirectTo = "/dashboard" }: RegisterForm
     </div>
   );
 }
+

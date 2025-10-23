@@ -30,21 +30,18 @@ export default function Home() {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up">
             <Link href="/auth/register">
-              <Button 
-                size="lg" 
-                className="bg-white text-gray-900 hover:bg-gray-100 border-2 border-white shadow-lg hover:shadow-xl transition-all duration-300 font-semibold px-8 py-4 text-lg w-full sm:w-auto transform hover:scale-105"
+              <button 
+                className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-white text-gray-900 hover:bg-gray-100 border-2 border-white shadow-lg hover:shadow-xl px-8 py-4 text-lg w-full sm:w-auto transform hover:scale-105 min-h-[48px]"
               >
                 Get Started Free
-              </Button>
+              </button>
             </Link>
             <Link href="/auth/login">
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 shadow-lg hover:shadow-xl transition-all duration-300 font-semibold px-8 py-4 text-lg w-full sm:w-auto transform hover:scale-105"
+              <button 
+                className="inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-gray-900 shadow-lg hover:shadow-xl px-8 py-4 text-lg w-full sm:w-auto transform hover:scale-105 min-h-[48px]"
               >
                 Sign In
-              </Button>
+              </button>
             </Link>
           </div>
 

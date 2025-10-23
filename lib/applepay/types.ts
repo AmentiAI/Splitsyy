@@ -64,3 +64,12 @@ export type ApplePayButtonType = "plain" | "buy" | "donate" | "check-out" | "sub
 export type ApplePayButtonStyle = "black" | "white" | "white-outline";
 
 
+
+
+
+
+
+
+
+
+

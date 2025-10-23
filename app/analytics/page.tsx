@@ -77,7 +77,7 @@ const goalsData = [
 
 function AnalyticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("6months");
-  const [selectedMetric, setSelectedMetric] = useState("networth");
+  const [selectedMetric, setSelectedMetric] = useState("netWorth");
 
   const currentData = mockAnalyticsData[mockAnalyticsData.length - 1];
   const previousData = mockAnalyticsData[mockAnalyticsData.length - 2];
@@ -89,25 +89,26 @@ function AnalyticsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Analytics & Reports</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Analytics & Reports</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-2">
               Track your financial progress and spending patterns
             </p>
           </div>
           <div className="flex items-center space-x-3">
             <Select
               value={selectedPeriod}
-              onValueChange={setSelectedPeriod}
-            >
-              <option value="1month">Last Month</option>
-              <option value="3months">Last 3 Months</option>
-              <option value="6months">Last 6 Months</option>
-              <option value="1year">Last Year</option>
-            </Select>
+              onChange={(e) => setSelectedPeriod(e.target.value)}
+              options={[
+                { value: "1month", label: "Last Month" },
+                { value: "3months", label: "Last 3 Months" },
+                { value: "6months", label: "Last 6 Months" },
+                { value: "1year", label: "Last Year" }
+              ]}
+            />
             <Button variant="outline">
               <Download className="w-4 h-4 mr-2" />
               Export Report
@@ -116,7 +117,7 @@ function AnalyticsPage() {
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -206,13 +207,14 @@ function AnalyticsPage() {
               <h2 className="text-lg font-semibold text-gray-900">Spending Trends</h2>
               <Select
                 value={selectedMetric}
-                onValueChange={setSelectedMetric}
-              >
-                <option value="networth">Net Worth</option>
-                <option value="income">Income</option>
-                <option value="expenses">Expenses</option>
-                <option value="savings">Savings</option>
-              </Select>
+                onChange={(e) => setSelectedMetric(e.target.value)}
+                options={[
+                  { value: "netWorth", label: "Net Worth" },
+                  { value: "income", label: "Income" },
+                  { value: "expenses", label: "Expenses" },
+                  { value: "savings", label: "Savings" }
+                ]}
+              />
             </div>
             
             <div className="space-y-4">
@@ -352,4 +354,5 @@ export default function Analytics() {
     </AuthGuard>
   );
 }
+
 

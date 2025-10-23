@@ -26,9 +26,27 @@ export async function POST(request: NextRequest) {
       await logAuditEvent(null, "login_failed", "auth", null, {
         email,
         error: authError.message,
-        ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown",
+        ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
         userAgent: request.headers.get("user-agent") || "unknown",
       });
+
+      // Handle specific error cases
+      if (authError.status === 400 && authError.code === "email_not_confirmed") {
+        // In development, allow unconfirmed emails to proceed
+        if (process.env.NODE_ENV === "development") {
+          console.warn("⚠️  Development mode: Allowing login with unconfirmed email");
+          // Don't return error, continue with the flow
+        } else {
+          return NextResponse.json(
+            { 
+              error: "Please verify your email address",
+              details: "Check your inbox for a confirmation link. If you didn't receive it, you can request a new one.",
+              code: "email_not_confirmed"
+            },
+            { status: 400 }
+          );
+        }
+      }
 
       return NextResponse.json(
         { error: "Invalid email or password" },
@@ -61,7 +79,7 @@ export async function POST(request: NextRequest) {
     // Log successful login
     await logAuditEvent(authData.user.id, "login_success", "auth", authData.user.id, {
       email,
-      ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown",
+      ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
       userAgent: request.headers.get("user-agent") || "unknown",
     });
 

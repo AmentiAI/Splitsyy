@@ -30,7 +30,13 @@ export async function signIn(email: string, password: string) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Login failed");
+    // Preserve error details if available
+    const errorMessage = data.details 
+      ? `${data.error}\n${data.details}`
+      : data.error || "Login failed";
+    const error = new Error(errorMessage) as Error & { code?: string };
+    error.code = data.code;
+    throw error;
   }
 
   return data;

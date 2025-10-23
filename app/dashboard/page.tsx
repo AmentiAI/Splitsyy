@@ -13,13 +13,13 @@ function DashboardPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-8">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
             Welcome back, {user?.email?.split("@")[0]}! 👋
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             Here's your complete financial overview and recent activity.
           </p>
         </div>
@@ -28,7 +28,7 @@ function DashboardPage() {
         <FinancialOverview />
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Recent Transactions */}
           <div className="lg:col-span-2">
             <RecentTransactions />

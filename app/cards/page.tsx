@@ -126,23 +126,23 @@ function CardsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Virtual Cards</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Virtual Cards</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-2">
               Manage your virtual debit and credit cards
             </p>
           </div>
-          <Button>
+          <Button className="w-full sm:w-auto">
             <Plus className="w-4 h-4 mr-2" />
             Create New Card
           </Button>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <Card className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -247,12 +247,12 @@ function CardsPage() {
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <Button variant="outline" size="sm">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Eye className="w-4 h-4 mr-2" />
                         View Details
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Settings className="w-4 h-4 mr-2" />
                         Manage
                       </Button>
@@ -300,12 +300,12 @@ function CardsPage() {
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <Button variant="outline" size="sm">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Eye className="w-4 h-4 mr-2" />
                         View Details
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Unlock className="w-4 h-4 mr-2" />
                         Unblock
                       </Button>
@@ -353,12 +353,12 @@ function CardsPage() {
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <Button variant="outline" size="sm">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Eye className="w-4 h-4 mr-2" />
                         View History
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Plus className="w-4 h-4 mr-2" />
                         Renew
                       </Button>
@@ -398,4 +398,5 @@ export default function Cards() {
     </AuthGuard>
   );
 }
+
 

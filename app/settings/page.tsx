@@ -28,6 +28,7 @@ import {
   Eye,
   EyeOff,
   CheckCircle,
+  Plus,
   AlertCircle
 } from "lucide-react";
 
@@ -96,11 +97,11 @@ function SettingsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">Settings</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             Manage your account settings and preferences
           </p>
         </div>
@@ -506,4 +507,5 @@ export default function Settings() {
     </AuthGuard>
   );
 }
+
 

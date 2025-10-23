@@ -17,6 +17,13 @@ export async function logAuditEvent(
       ...metadata,
     };
 
+    // Handle IP address - PostgreSQL inet type doesn't accept "unknown"
+    // Use null for unknown IPs or default to 0.0.0.0
+    let ipAddress: string | null = null;
+    if (request.ip && request.ip !== "unknown") {
+      ipAddress = request.ip as string;
+    }
+
     const { error } = await supabase
       .from("audit_logs")
       .insert({
@@ -25,8 +32,8 @@ export async function logAuditEvent(
         resource_type: resourceType,
         resource_id: resourceId,
         metadata,
-        ip_address: request.ip,
-        user_agent: request.userAgent,
+        ip_address: ipAddress,
+        user_agent: request.userAgent as string,
       });
 
     if (error) {

@@ -547,3 +547,12 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 **Status:** ✅ Mock mode ready, awaiting Apple Developer credentials
 
 
+
+
+
+
+
+
+
+
+

@@ -550,3 +550,12 @@ The payment infrastructure is solid and flexible. We can now:
 **Payment integration: Complete and ready to accept payments!**
 
 
+
+
+
+
+
+
+
+
+

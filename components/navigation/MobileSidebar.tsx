@@ -60,19 +60,20 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
       {/* Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
           onClick={onClose}
+          aria-hidden="true"
         />
       )}
 
       {/* Sidebar */}
       <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform transition-transform duration-300 ease-in-out lg:hidden",
+        "fixed inset-y-0 left-0 z-50 w-72 sm:w-80 max-w-[85vw] bg-gray-900 text-white transform transition-transform duration-300 ease-in-out lg:hidden",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full safe-area-inset">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <div className="flex items-center justify-between p-4 border-b border-gray-700 min-h-[60px]">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">S</span>
@@ -81,7 +82,8 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-800 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              aria-label="Close menu"
             >
               <X className="w-5 h-5" />
             </button>
@@ -90,21 +92,24 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
           {/* User Profile */}
           <div className="p-4 border-b border-gray-700">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <User className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <User className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">Aidan M Wilson</p>
-                <p className="text-xs text-gray-400 truncate">amentiaiserv@gmail.com</p>
+                <p className="text-sm sm:text-base font-medium truncate">Aidan M Wilson</p>
+                <p className="text-xs sm:text-sm text-gray-400 truncate">amentiaiserv@gmail.com</p>
               </div>
-              <button className="p-1 hover:bg-gray-800 rounded">
-                <Bell className="w-4 h-4" />
+              <button 
+                className="p-2 hover:bg-gray-800 rounded min-w-[44px] min-h-[44px] flex items-center justify-center"
+                aria-label="Notifications"
+              >
+                <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>
 
           {/* Main Navigation */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto overscroll-contain">
             <div className="space-y-1">
               {navigation.map((item) => {
                 const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
@@ -114,17 +119,17 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     href={item.href}
                     onClick={onClose}
                     className={cn(
-                      "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors group",
+                      "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors group min-h-[48px]",
                       isActive
                         ? "bg-blue-600 text-white"
                         : "text-gray-300 hover:bg-gray-800 hover:text-white"
                     )}
                   >
                     <item.icon className={cn(
-                      "w-5 h-5 flex-shrink-0",
+                      "w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0",
                       isActive ? "text-white" : "text-gray-400 group-hover:text-white"
                     )} />
-                    <span className="text-sm font-medium">{item.name}</span>
+                    <span className="text-sm sm:text-base font-medium">{item.name}</span>
                     {item.badge && (
                       <span className="ml-auto bg-red-500 text-xs px-2 py-1 rounded-full">
                         {item.badge}
@@ -146,10 +151,10 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
                     key={action.name}
                     href={action.href}
                     onClick={onClose}
-                    className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group"
+                    className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group min-h-[48px]"
                   >
-                    <action.icon className="w-5 h-5 text-gray-400 group-hover:text-white" />
-                    <span className="text-sm font-medium">{action.name}</span>
+                    <action.icon className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-white" />
+                    <span className="text-sm sm:text-base font-medium">{action.name}</span>
                   </Link>
                 ))}
               </div>
@@ -165,9 +170,9 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
               </div>
               <span className="text-xs text-gray-400">v1.0.0</span>
             </div>
-            <button className="flex items-center space-x-3 w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
-              <LogOut className="w-5 h-5 text-gray-400 group-hover:text-white" />
-              <span className="text-sm font-medium">Sign Out</span>
+            <button className="flex items-center space-x-3 w-full px-4 py-3 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group min-h-[48px]">
+              <LogOut className="w-5 h-5 sm:w-6 sm:h-6 text-gray-400 group-hover:text-white" />
+              <span className="text-sm sm:text-base font-medium">Sign Out</span>
             </button>
           </div>
         </div>
