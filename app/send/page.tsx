@@ -179,7 +179,7 @@ function SendMoneyPage() {
 
               <Input
                 label="Note (Optional)"
-                placeholder="What's this for?"
+                placeholder="What&apos;s this for?"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 fullWidth

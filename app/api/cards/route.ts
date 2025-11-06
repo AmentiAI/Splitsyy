@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { createCardSchema } from "@/lib/validations/cards";
 import { logAuditEvent } from "@/lib/supabase/audit";
 import { PaymentService } from "@/lib/payments";
-import { Database } from "@/types/database";
 
 /**
  * POST /api/cards

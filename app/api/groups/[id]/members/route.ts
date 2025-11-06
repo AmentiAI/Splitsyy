@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { addMemberSchema, updateMemberSchema } from "@/lib/validations/groups";
+import { addMemberSchema } from "@/lib/validations/groups";
 import { logAuditEvent } from "@/lib/supabase/audit";
-import { Database } from "@/types/database";
 
 /**
  * POST /api/groups/:id/members

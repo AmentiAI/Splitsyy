@@ -241,7 +241,7 @@ function SettingsPage() {
                         value={profileData.email}
                         onChange={(e) => setProfileData({...profileData, email: e.target.value})}
                         disabled={!isEditing}
-                        icon={<Mail className="w-4 h-4" />}
+                        leftIcon={<Mail className="w-4 h-4" />}
                       />
                     </div>
                     
@@ -254,7 +254,7 @@ function SettingsPage() {
                         value={profileData.phone}
                         onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
                         disabled={!isEditing}
-                        icon={<Phone className="w-4 h-4" />}
+                        leftIcon={<Phone className="w-4 h-4" />}
                       />
                     </div>
                     
@@ -266,7 +266,7 @@ function SettingsPage() {
                         value={profileData.address}
                         onChange={(e) => setProfileData({...profileData, address: e.target.value})}
                         disabled={!isEditing}
-                        icon={<MapPin className="w-4 h-4" />}
+                        leftIcon={<MapPin className="w-4 h-4" />}
                       />
                     </div>
                     
@@ -279,7 +279,7 @@ function SettingsPage() {
                         value={profileData.dateOfBirth}
                         onChange={(e) => setProfileData({...profileData, dateOfBirth: e.target.value})}
                         disabled={!isEditing}
-                        icon={<Calendar className="w-4 h-4" />}
+                        leftIcon={<Calendar className="w-4 h-4" />}
                       />
                     </div>
                     

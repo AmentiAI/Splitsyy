@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { updateCardSchema } from "@/lib/validations/cards";
 import { logAuditEvent } from "@/lib/supabase/audit";
-import { Database } from "@/types/database";
 
 /**
  * GET /api/cards/:id

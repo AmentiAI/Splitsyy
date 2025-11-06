@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { PaymentService, PAYMENT_CONFIG } from "@/lib/payments";
-import { Database } from "@/types/database";
 
 /**
  * POST /api/webhooks/payments
