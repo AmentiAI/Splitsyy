@@ -110,6 +110,7 @@ export async function GET(
         network: card.network,
         status: card.status,
         applePayTokenized: card.apple_pay_tokenized,
+        last4: (card as any).last_four || "••••",
         balance: availableBalance,
         totalContributed,
         totalSpent,

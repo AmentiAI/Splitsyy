@@ -20,6 +20,7 @@ interface CardDetails {
     network: string;
     status: string;
     applePayTokenized: boolean;
+    last4?: string;
     balance: number;
     totalContributed: number;
     totalSpent: number;
