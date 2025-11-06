@@ -354,7 +354,7 @@ function SplitsPage() {
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">Target Amount</span>
                       <span className="text-sm font-semibold text-gray-900">
-                        ${split.targetAmount.toLocaleString()}
+                        ${(split.total_amount / 100).toFixed(2)}
                       </span>
                     </div>
                     
