@@ -7,7 +7,7 @@ const updatePaymentMethodSchema = z.object({
   isDefault: z.boolean().optional(),
   isActive: z.boolean().optional(),
   billingName: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**

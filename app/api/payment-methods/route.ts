@@ -13,7 +13,7 @@ const createPaymentMethodSchema = z.object({
   expiryYear: z.number().min(2020).optional(),
   billingName: z.string().optional(),
   isDefault: z.boolean().optional().default(false),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 /**
