@@ -28,8 +28,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden w-full">
         {/* Top Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200 lg:hidden sticky top-0 z-30">
-          <div className="flex items-center justify-between px-4 sm:px-6 py-3 min-h-[60px]">
+        <header className="bg-white shadow-sm border-b border-gray-200 lg:hidden sticky top-0 z-30 safe-area-inset">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 min-h-[60px] max-w-7xl mx-auto w-full">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm sm:text-base">S</span>
@@ -47,8 +47,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="h-full w-full">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden safe-area-inset">
+          <div className="h-full w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             {children}
           </div>
         </main>

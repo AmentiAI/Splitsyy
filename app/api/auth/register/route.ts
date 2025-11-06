@@ -98,18 +98,27 @@ export async function POST(request: NextRequest) {
       name,
     });
 
-    return NextResponse.json(
-      {
-        message: "Account created successfully",
-        user: {
-          id: authData.user.id,
-          email: authData.user.email,
-          name,
-          emailConfirmed: authData.user.email_confirmed_at !== null,
-        },
+    // Return session if available (for auto-login after registration in dev mode)
+    const responseData: any = {
+      message: "Account created successfully",
+      user: {
+        id: authData.user.id,
+        email: authData.user.email,
+        name,
+        emailConfirmed: authData.user.email_confirmed_at !== null,
       },
-      { status: 201 }
-    );
+    };
+
+    // Include session if available (for development mode auto-confirmation)
+    if (authData.session) {
+      responseData.session = {
+        access_token: authData.session.access_token,
+        refresh_token: authData.session.refresh_token,
+        expires_at: authData.session.expires_at,
+      };
+    }
+
+    return NextResponse.json(responseData, { status: 201 });
   } catch (error) {
     console.error("Registration error:", error);
     

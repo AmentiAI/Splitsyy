@@ -43,13 +43,19 @@ export default function RegisterForm({ redirectTo = "/dashboard" }: RegisterForm
       const response = await signUp(formData.email, formData.password, formData.name);
       
       if (response.user) {
-        setSuccess(true);
-        // Don't redirect immediately - let user see success message
-        // They might need to check their email for confirmation
+        // If we have a session (development mode auto-confirmation), redirect to dashboard
+        if (response.session && response.user.emailConfirmed) {
+          // Small delay to ensure session is set
+          await new Promise(resolve => setTimeout(resolve, 100));
+          window.location.href = redirectTo;
+        } else {
+          setSuccess(true);
+          // Don't redirect immediately - let user see success message
+          // They might need to check their email for confirmation
+        }
       }
     } catch (err) {
       setError(getAuthErrorMessage(err));
-    } finally {
       setLoading(false);
     }
   };

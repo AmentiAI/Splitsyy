@@ -7,24 +7,47 @@ export async function signUp(email: string, password: string, name: string) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password, name }),
+    credentials: "include", // Important: include cookies
   });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Registration failed");
+    // Preserve error details if available
+    const errorMessage = data.details 
+      ? `${data.error}\n${data.details}`
+      : data.error || "Registration failed";
+    const error = new Error(errorMessage) as Error & { code?: string };
+    error.code = data.code;
+    throw error;
+  }
+
+  // If registration was successful and we have a session, set it on client
+  if (data.user && data.session) {
+    const supabase = createClient();
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+
+    if (sessionError) {
+      console.error("Failed to set client session after registration:", sessionError);
+      // Don't throw - registration was successful
+    }
   }
 
   return data;
 }
 
 export async function signIn(email: string, password: string) {
+  // First, try to sign in via the API (which sets server-side cookies)
   const response = await fetch("/api/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ email, password }),
+    credentials: "include", // Important: include cookies
   });
 
   const data = await response.json();
@@ -37,6 +60,20 @@ export async function signIn(email: string, password: string) {
     const error = new Error(errorMessage) as Error & { code?: string };
     error.code = data.code;
     throw error;
+  }
+
+  // Also set the session on the client side to ensure it's available immediately
+  if (data.session) {
+    const supabase = createClient();
+    const { error: sessionError } = await supabase.auth.setSession({
+      access_token: data.session.access_token,
+      refresh_token: data.session.refresh_token,
+    });
+
+    if (sessionError) {
+      console.error("Failed to set client session:", sessionError);
+      // Don't throw - the server-side session should still work
+    }
   }
 
   return data;

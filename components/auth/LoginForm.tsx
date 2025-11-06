@@ -30,6 +30,8 @@ export default function LoginForm({ redirectTo = "/dashboard" }: LoginFormProps)
       const response = await signIn(formData.email, formData.password);
       
       if (response.user) {
+        // Small delay to ensure session is set, then redirect
+        await new Promise(resolve => setTimeout(resolve, 100));
         // Force a page reload to refresh the auth state
         window.location.href = redirectTo;
       }

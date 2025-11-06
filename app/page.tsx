@@ -7,8 +7,8 @@ export default function Home() {
       <div className="absolute inset-0 bg-white/5"></div>
       
       {/* Hero Section */}
-      <div className="relative min-h-screen flex items-center justify-center px-4 z-10">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="relative min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 z-10 safe-area-inset">
+        <div className="max-w-4xl mx-auto text-center w-full">
           {/* Logo/Brand */}
           <div className="mb-8">
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-4 drop-shadow-lg">
@@ -45,7 +45,7 @@ export default function Home() {
           </div>
 
           {/* Features Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16 md:mt-20">
             <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 text-white border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
               <div className="text-4xl mb-4">💰</div>
               <h3 className="text-xl font-semibold mb-2">Pool Upfront</h3>
