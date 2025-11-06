@@ -4,11 +4,11 @@ import crypto from "crypto";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { splitId: string; phoneHash: string } }
+  { params }: { params: Promise<{ splitId: string; phoneHash: string }> }
 ) {
   try {
     const supabase = await createClient();
-    const { splitId, phoneHash } = params;
+    const { splitId, phoneHash } = await params;
 
     // Get the split and participant data
     const { data: split, error: splitError } = await supabase
