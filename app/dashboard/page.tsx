@@ -20,7 +20,7 @@ function DashboardPage() {
             Welcome back, {user?.email?.split("@")[0]}! 👋
           </h1>
           <p className="text-sm sm:text-base text-gray-600 mt-2">
-            Here's your complete financial overview and recent activity.
+            Here&apos;s your complete financial overview and recent activity.
           </p>
         </div>
 

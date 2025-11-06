@@ -100,7 +100,7 @@ export function CreateSplitModal({ isOpen, onClose, onCreateSplit }: CreateSplit
         {/* Description */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            What's this for?
+            What&apos;s this for?
           </label>
           <Input
             type="text"
@@ -136,7 +136,7 @@ export function CreateSplitModal({ isOpen, onClose, onCreateSplit }: CreateSplit
         <div>
           <div className="flex items-center justify-between mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Who's splitting? ({participants.length}/8)
+              Who&apos;s splitting? ({participants.length}/8)
             </label>
             {participants.length < 8 && (
               <Button

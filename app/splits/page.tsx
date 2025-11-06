@@ -19,7 +19,8 @@ import {
   MoreHorizontal,
   Eye,
   Settings,
-  MessageSquare
+  MessageSquare,
+  X
 } from "lucide-react";
 
 interface Split {

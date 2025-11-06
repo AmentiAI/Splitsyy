@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { requireAdminResponse } from "@/lib/auth/admin";
 import { logAuditEvent } from "@/lib/supabase/audit";
+import crypto from "crypto";
 
 /**
  * GET /api/admin/verification
@@ -81,7 +82,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Decrypt SSN for admin viewing
-    const crypto = require("crypto");
     const encryptionKey = process.env.SSN_ENCRYPTION_KEY || "dev-key-change-in-production-NEVER-USE-IN-PROD";
     const algorithm = "aes-256-cbc";
     const key = crypto.scryptSync(encryptionKey, "salt", 32);

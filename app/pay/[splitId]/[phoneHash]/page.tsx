@@ -302,7 +302,7 @@ export default function PaymentPage() {
                     Join a Group!
                   </h4>
                   <p className="text-sm text-blue-800">
-                    When everyone pays, we'll automatically create a group so you can all transact together in the future. Create an account to join!
+                    When everyone pays, we&apos;ll automatically create a group so you can all transact together in the future. Create an account to join!
                   </p>
                 </div>
               </div>
