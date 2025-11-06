@@ -1,16 +1,13 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { 
   ArrowUpRight, 
   ArrowDownLeft, 
-  CreditCard,
-  Users,
-  PiggyBank,
   TrendingUp,
-  Receipt,
   Plus
 } from "lucide-react";
 
@@ -24,6 +21,14 @@ interface QuickAction {
 }
 
 const quickActions: QuickAction[] = [
+  {
+    title: "Add Money",
+    description: "Top up your wallet",
+    icon: TrendingUp,
+    color: "text-purple-600",
+    bgColor: "bg-purple-100",
+    href: "/add-money",
+  },
   {
     title: "Send Money",
     description: "Transfer to friends",
@@ -40,38 +45,6 @@ const quickActions: QuickAction[] = [
     bgColor: "bg-green-100",
     href: "/request",
   },
-  {
-    title: "Add Money",
-    description: "Top up your wallet",
-    icon: TrendingUp,
-    color: "text-purple-600",
-    bgColor: "bg-purple-100",
-    href: "/add-money",
-  },
-  {
-    title: "Create Group",
-    description: "Start group payments",
-    icon: Users,
-    color: "text-orange-600",
-    bgColor: "bg-orange-100",
-    href: "/groups/create",
-  },
-  {
-    title: "New Split",
-    description: "Create shared fund",
-    icon: PiggyBank,
-    color: "text-yellow-600",
-    bgColor: "bg-yellow-100",
-    href: "/splits/create",
-  },
-  {
-    title: "Order Card",
-    description: "Get virtual card",
-    icon: CreditCard,
-    color: "text-indigo-600",
-    bgColor: "bg-indigo-100",
-    href: "/cards/create",
-  },
 ];
 
 export default function QuickActions() {
@@ -85,22 +58,22 @@ export default function QuickActions() {
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {quickActions.map((action, index) => (
-          <Button
-            key={index}
-            variant="ghost"
-            className="h-auto p-4 flex flex-col items-start text-left hover:bg-gray-50"
-            onClick={() => window.location.href = action.href}
-          >
-            <div className={`w-10 h-10 ${action.bgColor} rounded-lg flex items-center justify-center mb-3`}>
-              <action.icon className={`w-5 h-5 ${action.color}`} />
-            </div>
-            <div>
-              <p className="font-medium text-gray-900 mb-1">{action.title}</p>
-              <p className="text-sm text-gray-500">{action.description}</p>
-            </div>
-          </Button>
+          <Link key={index} href={action.href}>
+            <Button
+              variant="ghost"
+              className="h-auto p-4 flex flex-col items-start text-left hover:bg-gray-50 w-full"
+            >
+              <div className={`w-10 h-10 ${action.bgColor} rounded-lg flex items-center justify-center mb-3`}>
+                <action.icon className={`w-5 h-5 ${action.color}`} />
+              </div>
+              <div>
+                <p className="font-medium text-gray-900 mb-1">{action.title}</p>
+                <p className="text-sm text-gray-500">{action.description}</p>
+              </div>
+            </Button>
+          </Link>
         ))}
       </div>
     </Card>

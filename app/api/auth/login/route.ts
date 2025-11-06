@@ -22,13 +22,20 @@ export async function POST(request: NextRequest) {
     if (authError) {
       console.error("Login error:", authError);
       
-      // Log failed login attempt
-      await logAuditEvent(null, "login_failed", "auth", null, {
-        email,
-        error: authError.message,
-        ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
-        userAgent: request.headers.get("user-agent") || "unknown",
-      });
+      // Log failed login attempt (only if not a connection error)
+      if (!authError.message?.includes("fetch failed")) {
+        try {
+          await logAuditEvent(null, "login_failed", "auth", null, {
+            email,
+            error: authError.message,
+            code: authError.code,
+            ip: request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip"),
+            userAgent: request.headers.get("user-agent") || "unknown",
+          });
+        } catch (logError) {
+          console.error("Failed to log audit event:", logError);
+        }
+      }
 
       // Handle specific error cases
       if (authError.status === 400 && authError.code === "email_not_confirmed") {
@@ -48,8 +55,26 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Check for connection errors
+      if (authError.message?.includes("fetch failed") || authError.message?.includes("NetworkError")) {
+        console.error("❌ Supabase connection error - check environment variables");
+        return NextResponse.json(
+          { 
+            error: "Connection error",
+            details: "Unable to connect to authentication service. Please check your internet connection or try again later.",
+            code: "connection_error"
+          },
+          { status: 503 }
+        );
+      }
+
+      // Generic authentication error
       return NextResponse.json(
-        { error: "Invalid email or password" },
+        { 
+          error: "Invalid email or password",
+          details: "Please check your credentials and try again.",
+          code: authError.code || "invalid_credentials"
+        },
         { status: 401 }
       );
     }

@@ -188,7 +188,7 @@ function CardDetailsPage() {
               <VirtualCardDisplay
                 card={{
                   id: card.id,
-                  last4: "4242", // Mock - would come from provider
+                  last4: card.last4 || "••••",
                   network: card.network,
                   status: card.status,
                   balance: card.balance,
@@ -370,6 +370,8 @@ export default function CardPage() {
     </AuthGuard>
   );
 }
+
+
 
 
 

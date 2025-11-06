@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/Button";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-black via-silver-900 to-silver-800 relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-black/10"></div>
+      <div className="absolute inset-0 bg-white/5"></div>
       
       {/* Hero Section */}
       <div className="relative min-h-screen flex items-center justify-center px-4 z-10">

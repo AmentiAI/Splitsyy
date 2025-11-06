@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAdmin } from "@/lib/hooks/useAdmin";
+import { getCurrentUser } from "@/lib/auth/utils";
 import {
   LayoutDashboard,
   Users,
@@ -21,6 +23,9 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Shield,
+  ArrowUpRight,
+  ArrowDownLeft,
 } from "lucide-react";
 
 interface NavItem {
@@ -43,35 +48,52 @@ const navigation: NavItem[] = [
 
 const quickActions = [
   { name: "Add Money", href: "/add-money", icon: TrendingUp },
-  { name: "Send Money", href: "/send", icon: CreditCard },
-  { name: "Request Money", href: "/request", icon: Receipt },
-  { name: "Create Group", href: "/groups/create", icon: Users },
-  { name: "New Split", href: "/splits/create", icon: PiggyBank },
-  { name: "Order Card", href: "/cards/create", icon: CreditCard },
+  { name: "Send Money", href: "/send", icon: ArrowUpRight },
+  { name: "Request Money", href: "/request", icon: ArrowDownLeft },
 ];
 
 export default function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
+  const { isAdmin } = useAdmin();
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const userData = await getCurrentUser();
+        setUser(userData.user);
+      } catch (error) {
+        console.error("Failed to load user:", error);
+      }
+    }
+    loadUser();
+  }, []);
+
+  // Build navigation items dynamically based on admin status
+  const navigationItems: NavItem[] = [
+    ...navigation,
+    ...(isAdmin ? [{ name: "Admin", href: "/admin", icon: Shield }] : []),
+  ];
 
   return (
     <div className={cn(
-      "flex flex-col h-screen bg-gray-900 text-white transition-all duration-300",
+      "flex flex-col h-screen bg-black text-white transition-all duration-300",
       collapsed ? "w-16" : "w-64"
     )}>
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-silver-800">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+              <span className="text-black font-bold text-sm">S</span>
             </div>
             <span className="text-xl font-bold">Splitsy</span>
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-silver-900 rounded-lg transition-colors"
         >
           {collapsed ? (
             <ChevronRight className="w-5 h-5" />
@@ -83,16 +105,16 @@ export default function Sidebar() {
 
       {/* User Profile */}
       {!collapsed && (
-        <div className="p-4 border-b border-gray-700">
+        <div className="p-4 border-b border-silver-800">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-silver-300 rounded-full flex items-center justify-center">
+              <User className="w-5 h-5 text-black" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Aidan M Wilson</p>
-              <p className="text-xs text-gray-400 truncate">amentiaiserv@gmail.com</p>
+              <p className="text-sm font-medium truncate">{user?.name || user?.email || "User"}</p>
+              <p className="text-xs text-silver-400 truncate">{user?.email || ""}</p>
             </div>
-            <button className="p-1 hover:bg-gray-800 rounded">
+            <button className="p-1 hover:bg-silver-900 rounded">
               <Bell className="w-4 h-4" />
             </button>
           </div>
@@ -102,7 +124,7 @@ export default function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 p-4 space-y-2">
         <div className="space-y-1">
-          {navigation.map((item) => {
+          {navigationItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
@@ -111,13 +133,13 @@ export default function Sidebar() {
                 className={cn(
                   "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors group",
                   isActive
-                    ? "bg-blue-600 text-white"
-                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                    ? "bg-white text-black"
+                    : "text-silver-300 hover:bg-silver-900 hover:text-white"
                 )}
               >
                 <item.icon className={cn(
                   "w-5 h-5 flex-shrink-0",
-                  isActive ? "text-white" : "text-gray-400 group-hover:text-white"
+                  isActive ? "text-black" : "text-silver-400 group-hover:text-white"
                 )} />
                 {!collapsed && (
                   <>
@@ -137,7 +159,7 @@ export default function Sidebar() {
         {/* Quick Actions */}
         {!collapsed && (
           <div className="pt-6">
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            <h3 className="text-xs font-semibold text-silver-400 uppercase tracking-wider mb-3">
               Quick Actions
             </h3>
             <div className="space-y-1">
@@ -145,9 +167,9 @@ export default function Sidebar() {
                 <Link
                   key={action.name}
                   href={action.href}
-                  className="flex items-center space-x-3 px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group"
+                  className="flex items-center space-x-3 px-3 py-2 text-silver-300 hover:bg-silver-900 hover:text-white rounded-lg transition-colors group"
                 >
-                  <action.icon className="w-5 h-5 text-gray-400 group-hover:text-white" />
+                  <action.icon className="w-5 h-5 text-silver-400 group-hover:text-white" />
                   <span className="text-sm font-medium">{action.name}</span>
                 </Link>
               ))}
@@ -157,18 +179,18 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-gray-700">
+      <div className="p-4 border-t border-silver-800">
         {!collapsed && (
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-xs text-gray-400">Online</span>
+              <div className="w-2 h-2 bg-silver-400 rounded-full"></div>
+              <span className="text-xs text-silver-400">Online</span>
             </div>
-            <span className="text-xs text-gray-400">v1.0.0</span>
+            <span className="text-xs text-silver-400">v1.0.0</span>
           </div>
         )}
-        <button className="flex items-center space-x-3 w-full px-3 py-2 text-gray-300 hover:bg-gray-800 hover:text-white rounded-lg transition-colors group">
-          <LogOut className="w-5 h-5 text-gray-400 group-hover:text-white" />
+        <button className="flex items-center space-x-3 w-full px-3 py-2 text-silver-300 hover:bg-silver-900 hover:text-white rounded-lg transition-colors group">
+          <LogOut className="w-5 h-5 text-silver-400 group-hover:text-white" />
           {!collapsed && <span className="text-sm font-medium">Sign Out</span>}
         </button>
       </div>

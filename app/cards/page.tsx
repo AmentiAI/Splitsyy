@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -34,61 +34,6 @@ interface VirtualCard {
   lastUsed: string;
 }
 
-const mockCards: VirtualCard[] = [
-  {
-    id: "1",
-    name: "Main Spending Card",
-    cardNumber: "**** **** **** 1234",
-    expiryDate: "12/26",
-    balance: 1250.50,
-    spendingLimit: 5000,
-    status: "active",
-    type: "debit",
-    color: "bg-gradient-to-br from-blue-500 to-purple-600",
-    createdAt: "2025-01-01",
-    lastUsed: "2025-10-09",
-  },
-  {
-    id: "2",
-    name: "Travel Card",
-    cardNumber: "**** **** **** 5678",
-    expiryDate: "08/26",
-    balance: 850.00,
-    spendingLimit: 3000,
-    status: "active",
-    type: "debit",
-    color: "bg-gradient-to-br from-green-500 to-teal-600",
-    createdAt: "2025-02-15",
-    lastUsed: "2025-10-08",
-  },
-  {
-    id: "3",
-    name: "Business Card",
-    cardNumber: "**** **** **** 9012",
-    expiryDate: "06/27",
-    balance: 0,
-    spendingLimit: 10000,
-    status: "blocked",
-    type: "credit",
-    color: "bg-gradient-to-br from-orange-500 to-red-600",
-    createdAt: "2025-03-01",
-    lastUsed: "2025-10-05",
-  },
-  {
-    id: "4",
-    name: "Emergency Card",
-    cardNumber: "**** **** **** 3456",
-    expiryDate: "03/26",
-    balance: 2000.00,
-    spendingLimit: 2000,
-    status: "expired",
-    type: "debit",
-    color: "bg-gradient-to-br from-gray-500 to-gray-700",
-    createdAt: "2025-01-15",
-    lastUsed: "2025-09-30",
-  },
-];
-
 const getStatusColor = (status: string) => {
   switch (status) {
     case "active":
@@ -116,13 +61,45 @@ const getStatusIcon = (status: string) => {
 };
 
 function CardsPage() {
-  const [activeCards, setActiveCards] = useState(mockCards.filter(c => c.status === "active"));
-  const [blockedCards, setBlockedCards] = useState(mockCards.filter(c => c.status === "blocked"));
-  const [expiredCards, setExpiredCards] = useState(mockCards.filter(c => c.status === "expired"));
+  const [cards, setCards] = useState<VirtualCard[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const totalBalance = mockCards.reduce((sum, card) => sum + card.balance, 0);
-  const totalSpendingLimit = mockCards.reduce((sum, card) => sum + card.spendingLimit, 0);
+  useEffect(() => {
+    async function fetchCards() {
+      try {
+        const response = await fetch("/api/cards");
+        if (response.ok) {
+          const data = await response.json();
+          setCards(data.cards || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch cards:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCards();
+  }, []);
+
+  const activeCards = cards.filter(c => c.status === "active");
+  const blockedCards = cards.filter(c => c.status === "blocked");
+  const expiredCards = cards.filter(c => c.status === "expired");
+
+  const totalBalance = cards.reduce((sum, card) => sum + card.balance, 0);
+  const totalSpendingLimit = cards.reduce((sum, card) => sum + card.spendingLimit, 0);
   const activeCardsCount = activeCards.length;
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="text-center py-12">
+            <p className="text-gray-600">Loading cards...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -371,7 +348,7 @@ function CardsPage() {
         )}
 
         {/* Empty State */}
-        {mockCards.length === 0 && (
+        {cards.length === 0 && (
           <Card className="p-12">
             <div className="text-center">
               <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />

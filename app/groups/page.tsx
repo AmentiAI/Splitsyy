@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -30,53 +31,6 @@ interface Group {
   category: string;
 }
 
-const mockGroups: Group[] = [
-  {
-    id: "1",
-    name: "Roommates",
-    description: "Shared expenses with my roommates",
-    memberCount: 3,
-    totalExpenses: 1250.50,
-    createdAt: "2025-10-01",
-    createdBy: "Aidan Wilson",
-    status: "active",
-    category: "Housing",
-  },
-  {
-    id: "2",
-    name: "Weekend Warriors",
-    description: "Adventure and travel group",
-    memberCount: 6,
-    totalExpenses: 3200.75,
-    createdAt: "2025-09-15",
-    createdBy: "Sarah Johnson",
-    status: "active",
-    category: "Travel",
-  },
-  {
-    id: "3",
-    name: "Office Lunch Club",
-    description: "Daily lunch expenses at work",
-    memberCount: 8,
-    totalExpenses: 890.25,
-    createdAt: "2025-09-01",
-    createdBy: "Mike Chen",
-    status: "active",
-    category: "Food",
-  },
-  {
-    id: "4",
-    name: "Gym Buddies",
-    description: "Fitness and wellness expenses",
-    memberCount: 4,
-    totalExpenses: 450.00,
-    createdAt: "2025-08-20",
-    createdBy: "Lisa Rodriguez",
-    status: "archived",
-    category: "Health",
-  },
-];
-
 const getStatusColor = (status: string) => {
   switch (status) {
     case "active":
@@ -89,12 +43,44 @@ const getStatusColor = (status: string) => {
 };
 
 function GroupsPage() {
-  const [activeGroups, setActiveGroups] = useState(mockGroups.filter(g => g.status === "active"));
-  const [archivedGroups, setArchivedGroups] = useState(mockGroups.filter(g => g.status === "archived"));
+  const [groups, setGroups] = useState<Group[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const totalMembers = mockGroups.reduce((sum, group) => sum + group.memberCount, 0);
-  const totalExpenses = mockGroups.reduce((sum, group) => sum + group.totalExpenses, 0);
+  useEffect(() => {
+    async function fetchGroups() {
+      try {
+        const response = await fetch("/api/groups");
+        if (response.ok) {
+          const data = await response.json();
+          setGroups(data.groups || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch groups:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchGroups();
+  }, []);
+
+  const activeGroups = groups.filter(g => g.status === "active");
+  const archivedGroups = groups.filter(g => g.status === "archived");
+
+  const totalMembers = groups.reduce((sum, group) => sum + group.memberCount, 0);
+  const totalExpenses = groups.reduce((sum, group) => sum + group.totalExpenses, 0);
   const activeGroupsCount = activeGroups.length;
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="text-center py-12">
+            <p className="text-gray-600">Loading groups...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -107,10 +93,12 @@ function GroupsPage() {
               Manage your expense-sharing groups
             </p>
           </div>
-          <Button className="w-full sm:w-auto">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Group
-          </Button>
+          <Link href="/groups/create">
+            <Button className="w-full sm:w-auto">
+              <Plus className="w-4 h-4 mr-2" />
+              Create Group
+            </Button>
+          </Link>
         </div>
 
         {/* Summary Cards */}
@@ -204,14 +192,18 @@ function GroupsPage() {
                   
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between">
-                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Details
-                      </Button>
-                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                        <Settings className="w-4 h-4 mr-2" />
-                        Manage
-                      </Button>
+                      <Link href={`/groups/${group.id}`}>
+                        <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                          <Eye className="w-4 h-4 mr-2" />
+                          View Details
+                        </Button>
+                      </Link>
+                      <Link href={`/groups/${group.id}`}>
+                        <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                          <Settings className="w-4 h-4 mr-2" />
+                          Manage
+                        </Button>
+                      </Link>
                     </div>
                   </div>
                 </Card>
@@ -266,10 +258,12 @@ function GroupsPage() {
                   
                   <div className="mt-4 pt-4 border-t border-gray-200">
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:justify-between">
-                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                        <Eye className="w-4 h-4 mr-2" />
-                        View History
-                      </Button>
+                      <Link href={`/groups/${group.id}`}>
+                        <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                          <Eye className="w-4 h-4 mr-2" />
+                          View History
+                        </Button>
+                      </Link>
                       <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Settings className="w-4 h-4 mr-2" />
                         Restore
@@ -283,7 +277,7 @@ function GroupsPage() {
         )}
 
         {/* Empty State */}
-        {mockGroups.length === 0 && (
+        {groups.length === 0 && (
           <Card className="p-12">
             <div className="text-center">
               <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -291,10 +285,12 @@ function GroupsPage() {
               <p className="text-gray-600 mb-6">
                 Create your first group to start sharing expenses with friends and family.
               </p>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Create Your First Group
-              </Button>
+              <Link href="/groups/create">
+                <Button>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Create Your First Group
+                </Button>
+              </Link>
             </div>
           </Card>
         )}

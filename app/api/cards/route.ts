@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
       .eq("id", validatedData.poolId)
       .single();
 
-    const currency = (poolCurrency as any)?.groups?.currency || "usd";
+    const currency = (poolCurrency as any)?.groups?.currency?.toUpperCase() || "USD";
 
     // Create virtual card with payment provider
     let providerCard;
@@ -140,6 +140,7 @@ export async function POST(request: NextRequest) {
         pool_id: validatedData.poolId,
         provider_card_id: providerCard.id,
         network: validatedData.network,
+        last_four: providerCard.last4 || String(Math.floor(1000 + Math.random() * 9000)),
         status: "active",
         apple_pay_tokenized: false,
       })

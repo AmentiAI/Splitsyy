@@ -177,6 +177,7 @@ export async function GET(request: NextRequest) {
         id,
         group_id,
         target_amount,
+        current_amount,
         status,
         designated_payer,
         created_at,
@@ -206,17 +207,32 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Transform data
-    const transformedPools = pools.map((pool: any) => ({
-      id: pool.id,
-      groupId: pool.group_id,
-      groupName: pool.groups?.name,
-      currency: pool.groups?.currency,
-      targetAmount: pool.target_amount,
-      status: pool.status,
-      designatedPayer: pool.designated_payer,
-      createdAt: pool.created_at,
-    }));
+    // Transform data and calculate balance from contributions
+    const transformedPools = await Promise.all(
+      pools.map(async (pool: any) => {
+        // Get contributions for this pool
+        const { data: contributions } = await supabase
+          .from("contributions")
+          .select("amount")
+          .eq("pool_id", pool.id)
+          .eq("status", "succeeded");
+        
+        const balance = contributions?.reduce((sum, c) => sum + (c.amount || 0), 0) || 0;
+        
+        return {
+          id: pool.id,
+          groupId: pool.group_id,
+          groupName: pool.groups?.name,
+          currency: pool.groups?.currency,
+          targetAmount: pool.target_amount,
+          currentAmount: pool.current_amount || 0,
+          balance, // Use calculated balance from contributions
+          status: pool.status,
+          designatedPayer: pool.designated_payer,
+          createdAt: pool.created_at,
+        };
+      })
+    );
 
     return NextResponse.json({
       pools: transformedPools,

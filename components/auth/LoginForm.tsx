@@ -34,8 +34,19 @@ export default function LoginForm({ redirectTo = "/dashboard" }: LoginFormProps)
         window.location.href = redirectTo;
       }
     } catch (err) {
-      setError(getAuthErrorMessage(err));
+      const errorMessage = getAuthErrorMessage(err);
+      // Add helpful suggestion for invalid credentials
+      let displayError = errorMessage;
+      if (errorMessage.includes("Invalid email or password") || errorMessage.includes("invalid_credentials")) {
+        displayError = "Invalid email or password.\n\nDon't have an account? Click 'Sign up' below to create one.";
+      }
+      setError(displayError);
       setLoading(false); // Only set loading to false on error
+      
+      // Log detailed error in development
+      if (process.env.NODE_ENV === "development") {
+        console.error("Login error details:", err);
+      }
     }
     // Don't set loading to false on success since we're redirecting
   };
@@ -66,7 +77,7 @@ export default function LoginForm({ redirectTo = "/dashboard" }: LoginFormProps)
         
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
-            <div className="font-semibold mb-1">Error</div>
+            <div className="font-semibold mb-2">Login Failed</div>
             <div className="text-sm whitespace-pre-line">{error}</div>
           </div>
         )}

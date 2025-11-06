@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -53,14 +53,38 @@ function SettingsPage() {
   const [showPassword, setShowPassword] = useState(false);
   
   const [profileData, setProfileData] = useState({
-    firstName: "Aidan",
-    lastName: "Wilson",
-    email: "amentiaiserv@gmail.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, Providence, RI 02903",
-    dateOfBirth: "1995-06-15",
-    bio: "Financial enthusiast and early adopter of digital payment solutions.",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    address: "",
+    dateOfBirth: "",
+    bio: "",
   });
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const response = await fetch("/api/auth/user");
+        if (response.ok) {
+          const data = await response.json();
+          const nameParts = (data.user?.name || "").split(" ");
+          setProfileData({
+            firstName: nameParts[0] || "",
+            lastName: nameParts.slice(1).join(" ") || "",
+            email: data.user?.email || "",
+            phone: "",
+            address: "",
+            dateOfBirth: "",
+            bio: "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load profile:", error);
+      }
+    }
+    loadProfile();
+  }, []);
 
   const [notifications, setNotifications] = useState<NotificationSettings>({
     email: true,

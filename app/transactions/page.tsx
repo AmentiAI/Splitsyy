@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -35,118 +36,6 @@ interface Transaction {
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const mockTransactions: Transaction[] = [
-  {
-    id: "1",
-    description: "Salary Deposit",
-    amount: 4200.00,
-    type: "income",
-    category: "Salary",
-    date: "2025-10-09",
-    status: "completed",
-    account: "Main Account",
-    icon: ArrowDownLeft,
-  },
-  {
-    id: "2",
-    description: "Grocery Store - Whole Foods",
-    amount: -125.50,
-    type: "expense",
-    category: "Groceries",
-    date: "2025-10-08",
-    status: "completed",
-    account: "Main Account",
-    icon: ShoppingBag,
-  },
-  {
-    id: "3",
-    description: "Coffee Shop",
-    amount: -8.75,
-    type: "expense",
-    category: "Food & Dining",
-    date: "2025-10-08",
-    status: "completed",
-    account: "Main Account",
-    icon: Coffee,
-  },
-  {
-    id: "4",
-    description: "Gas Station - Shell",
-    amount: -45.20,
-    type: "expense",
-    category: "Transportation",
-    date: "2025-10-07",
-    status: "completed",
-    account: "Main Account",
-    icon: Car,
-  },
-  {
-    id: "5",
-    description: "Rent Payment",
-    amount: -1200.00,
-    type: "expense",
-    category: "Housing",
-    date: "2025-10-05",
-    status: "pending",
-    account: "Main Account",
-    icon: Home,
-  },
-  {
-    id: "6",
-    description: "Freelance Payment",
-    amount: 850.00,
-    type: "income",
-    category: "Freelance",
-    date: "2025-10-04",
-    status: "completed",
-    account: "Main Account",
-    icon: ArrowDownLeft,
-  },
-  {
-    id: "7",
-    description: "Online Shopping - Amazon",
-    amount: -89.99,
-    type: "expense",
-    category: "Shopping",
-    date: "2025-10-03",
-    status: "completed",
-    account: "Main Account",
-    icon: ShoppingBag,
-  },
-  {
-    id: "8",
-    description: "Restaurant - Italian Bistro",
-    amount: -67.50,
-    type: "expense",
-    category: "Food & Dining",
-    date: "2025-10-02",
-    status: "completed",
-    account: "Main Account",
-    icon: Coffee,
-  },
-  {
-    id: "9",
-    description: "Uber Ride",
-    amount: -23.45,
-    type: "expense",
-    category: "Transportation",
-    date: "2025-10-01",
-    status: "completed",
-    account: "Main Account",
-    icon: Car,
-  },
-  {
-    id: "10",
-    description: "Investment Dividend",
-    amount: 125.00,
-    type: "income",
-    category: "Investment",
-    date: "2025-09-30",
-    status: "completed",
-    account: "Investment Account",
-    icon: ArrowDownLeft,
-  },
-];
 
 const categories = [
   "All Categories",
@@ -184,12 +73,31 @@ const getStatusColor = (status: string) => {
 };
 
 function TransactionsPage() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedAccount, setSelectedAccount] = useState("All Accounts");
   const [selectedStatus, setSelectedStatus] = useState("All Status");
 
-  const filteredTransactions = mockTransactions.filter((transaction) => {
+  useEffect(() => {
+    async function fetchTransactions() {
+      try {
+        const response = await fetch("/api/transactions");
+        if (response.ok) {
+          const data = await response.json();
+          setTransactions(data.transactions || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch transactions:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTransactions();
+  }, []);
+
+  const filteredTransactions = transactions.filter((transaction) => {
     const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "All Categories" || transaction.category === selectedCategory;
     const matchesAccount = selectedAccount === "All Accounts" || transaction.account === selectedAccount;
@@ -198,6 +106,38 @@ function TransactionsPage() {
     return matchesSearch && matchesCategory && matchesAccount && matchesStatus;
   });
 
+  const handleExport = () => {
+    // Create CSV content
+    const headers = ["Date", "Description", "Category", "Type", "Amount", "Status", "Account"];
+    const rows = filteredTransactions.map(t => [
+      t.date,
+      t.description,
+      t.category,
+      t.type,
+      `$${Math.abs(t.amount).toFixed(2)}`,
+      t.status,
+      t.account || "N/A",
+    ]);
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n");
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `transactions-${new Date().toISOString().split("T")[0]}.csv`);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const totalIncome = filteredTransactions
     .filter(t => t.type === "income")
     .reduce((sum, t) => sum + t.amount, 0);
@@ -205,6 +145,18 @@ function TransactionsPage() {
   const totalExpenses = filteredTransactions
     .filter(t => t.type === "expense")
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+  if (loading) {
+    return (
+      <DashboardLayout>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="text-center py-12">
+            <p className="text-gray-600">Loading transactions...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -218,14 +170,19 @@ function TransactionsPage() {
             </p>
           </div>
           <div className="flex items-center space-x-3">
-            <Button variant="outline">
+            <Button 
+              variant="outline"
+              onClick={handleExport}
+            >
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Transaction
-            </Button>
+            <Link href="/transactions/add">
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Transaction
+              </Button>
+            </Link>
           </div>
         </div>
 

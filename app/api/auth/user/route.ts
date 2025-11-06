@@ -26,7 +26,7 @@ export async function GET() {
     // Get user profile
     const { data: profile, error: profileError } = await supabase
       .from("users")
-      .select("id, name, email, kyc_status, created_at, updated_at")
+      .select("id, name, email, kyc_status, is_platform_admin, created_at, updated_at")
       .eq("id", user.id)
       .single();
 
@@ -45,6 +45,7 @@ export async function GET() {
           email: user.email,
           name: profile.name,
           kyc_status: profile.kyc_status,
+          is_platform_admin: profile.is_platform_admin || false,
           created_at: profile.created_at,
           updated_at: profile.updated_at,
           emailConfirmed: user.email_confirmed_at !== null,
@@ -99,7 +100,7 @@ export async function PUT(request: NextRequest) {
     // Get updated profile
     const { data: profile, error: profileError } = await supabase
       .from("users")
-      .select("id, name, email, kyc_status, created_at, updated_at")
+      .select("id, name, email, kyc_status, is_platform_admin, created_at, updated_at")
       .eq("id", user.id)
       .single();
 
@@ -119,6 +120,7 @@ export async function PUT(request: NextRequest) {
           email: user.email,
           name: profile.name,
           kyc_status: profile.kyc_status,
+          is_platform_admin: profile.is_platform_admin || false,
           created_at: profile.created_at,
           updated_at: profile.updated_at,
           emailConfirmed: user.email_confirmed_at !== null,

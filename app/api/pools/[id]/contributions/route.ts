@@ -154,6 +154,23 @@ export async function POST(
       );
     }
 
+    // Get user's payment method if provided
+    let paymentMethodId = validatedData.paymentMethodId;
+    if (!paymentMethodId) {
+      // Try to get user's default payment method
+      const { data: defaultMethod } = await supabase
+        .from("user_payment_methods")
+        .select("provider_payment_method_id")
+        .eq("user_id", session.user.id)
+        .eq("is_default", true)
+        .eq("is_active", true)
+        .single();
+      
+      if (defaultMethod?.provider_payment_method_id) {
+        paymentMethodId = defaultMethod.provider_payment_method_id;
+      }
+    }
+
     // Create payment intent using payment service
     let paymentIntent;
     try {
@@ -163,7 +180,7 @@ export async function POST(
         contributionId: contribution.id,
         userId: session.user.id,
         poolId: poolId,
-        paymentMethod: validatedData.paymentMethodId,
+        paymentMethod: paymentMethodId,
       });
 
       // If payment succeeded immediately (mock mode with auto-succeed)
