@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { logAuditEvent } from "@/lib/supabase/audit";
 import { z } from "zod";
+import crypto from "crypto";
 
 const verificationSchema = z.object({
   ssn: z.string().regex(/^\d{3}-?\d{2}-?\d{4}$/, "Invalid SSN format"),
@@ -54,17 +55,28 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Encrypt sensitive data before storing
+    // In production, use proper encryption library (see lib/utils/encryption.ts)
+    // For now, basic encryption (IMPORTANT: Use proper encryption in production!)
+    const encryptionKey = process.env.SSN_ENCRYPTION_KEY || "dev-key-change-in-production-NEVER-USE-IN-PROD";
+    const algorithm = "aes-256-cbc";
+    const key = crypto.scryptSync(encryptionKey, "salt", 32);
+    
+    function encrypt(text: string): string {
+      const iv = crypto.randomBytes(16);
+      const cipher = crypto.createCipheriv(algorithm, key, iv);
+      let encrypted = cipher.update(text, "utf8", "hex");
+      encrypted += cipher.final("hex");
+      return iv.toString("hex") + ":" + encrypted;
+    }
+    
+    const ssnEncrypted = encrypt(validatedData.ssn);
+    const idNumberEncrypted = encrypt(validatedData.idNumber);
+    
     // In production, here you would:
     // 1. Call third-party verification API (Stripe Identity, Socure, Persona, etc.)
     // 2. Get verification ID from provider
-    // 3. Store encrypted SSN
-    
-    // For now, we'll encrypt and store (mock the third-party call)
-    const encryptionKey = process.env.SSN_ENCRYPTION_KEY || "dev-key-change-in-production";
-    
-    // Encrypt SSN using Supabase RPC (will be handled at DB level)
-    // For now, we'll store encrypted value (in production, use proper encryption)
-    const ssnEncrypted = await supabase.rpc("encrypt_ssn", { ssn: validatedData.ssn });
+    // Example: const verificationResult = await stripeIdentity.createVerificationSession({...})
     
     // Mock third-party verification (replace with actual API call)
     const mockProviderResponse = {
