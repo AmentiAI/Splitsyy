@@ -18,7 +18,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:install": "playwright install",
     "type-check": "tsc --noEmit",
-    "prepare": "node scripts/prepare.js",
+    "prepare": "node -e \"if(process.env.CI||process.env.VERCEL)process.exit(0);require('child_process').execSync('husky install',{stdio:'inherit'})\" || true",
     "db:test": "tsx scripts/test-supabase.ts",
     "db:types": "bash scripts/generate-types.sh",
     "supabase:start": "supabase start",

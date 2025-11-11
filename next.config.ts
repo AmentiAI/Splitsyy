@@ -6,25 +6,26 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     domains: [],
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   compress: true,
-  experimental: {
-    optimizeCss: true,
-  },
+  // Temporarily disable experimental features that might cause build issues
+  // experimental: {
+  //   optimizeCss: true,
+  // },
   webpack: (config, { dev, isServer }) => {
     // Suppress the webpack cache strategy warning
     config.infrastructureLogging = {
-      level: 'error',
+      level: "error",
     };
-    
+
     // Reduce webpack cache warnings
-    if (config.cache && typeof config.cache === 'object') {
-      config.cache.compression = 'gzip';
+    if (config.cache && typeof config.cache === "object") {
+      config.cache.compression = "gzip";
     }
-    
+
     return config;
   },
   // Suppress webpack warnings in console
@@ -36,4 +37,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-
