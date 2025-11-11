@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { Power, PowerOff, AlertTriangle } from "lucide-react";
@@ -34,7 +40,9 @@ export default function KillSwitch() {
       setStatus(data);
       setReason(data.reason || "");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load kill switch status");
+      setError(
+        err instanceof Error ? err.message : "Failed to load kill switch status"
+      );
     } finally {
       setLoading(false);
     }
@@ -63,13 +71,15 @@ export default function KillSwitch() {
 
       const data = await response.json();
       await fetchStatus();
-      
+
       // Show success message
       if (data.success) {
         // Optionally show a toast notification here
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update kill switch");
+      setError(
+        err instanceof Error ? err.message : "Failed to update kill switch"
+      );
     } finally {
       setSaving(false);
     }
@@ -80,8 +90,8 @@ export default function KillSwitch() {
       <Card>
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-silver-200 rounded w-1/4"></div>
-            <div className="h-10 bg-silver-200 rounded"></div>
+            <div className="h-4 w-1/4 rounded bg-brand-green-100"></div>
+            <div className="h-10 rounded bg-brand-blue-100"></div>
           </div>
         </CardContent>
       </Card>
@@ -95,9 +105,9 @@ export default function KillSwitch() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           {isEnabled ? (
-            <Power className="w-5 h-5 text-black" />
+            <Power className="h-5 w-5 text-brand-green-500" />
           ) : (
-            <PowerOff className="w-5 h-5 text-silver-600" />
+            <PowerOff className="h-5 w-5 text-brand-blue-500" />
           )}
           Platform Kill Switch
         </CardTitle>
@@ -110,7 +120,7 @@ export default function KillSwitch() {
       <CardContent className="space-y-4">
         {error && (
           <Alert variant="error">
-            <AlertTriangle className="w-4 h-4" />
+            <AlertTriangle className="h-4 w-4" />
             {error}
           </Alert>
         )}
@@ -121,7 +131,7 @@ export default function KillSwitch() {
               <strong>Disable Reason:</strong> {status.reason}
             </div>
             {status.disabled_at && (
-              <div className="text-sm mt-1">
+              <div className="mt-1 text-sm">
                 Disabled at: {new Date(status.disabled_at).toLocaleString()}
               </div>
             )}
@@ -130,14 +140,18 @@ export default function KillSwitch() {
 
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-black mb-2">
+            <label className="mb-2 block text-sm font-medium text-black">
               Reason (required when disabling)
             </label>
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder={isEnabled ? "Enter reason for disabling..." : status?.reason || ""}
-              className="w-full px-3 py-2 border border-silver-400 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+              placeholder={
+                isEnabled
+                  ? "Enter reason for disabling..."
+                  : status?.reason || ""
+              }
+              className="w-full rounded-lg border border-brand-blue-200 px-3 py-2 focus:border-brand-green-500 focus:ring-2 focus:ring-brand-green-500"
               rows={3}
               disabled={saving}
             />
@@ -152,7 +166,7 @@ export default function KillSwitch() {
                 loading={saving}
                 fullWidth
               >
-                <PowerOff className="w-4 h-4 mr-2" />
+                <PowerOff className="mr-2 h-4 w-4" />
                 Disable Platform
               </Button>
             ) : (
@@ -163,14 +177,14 @@ export default function KillSwitch() {
                 loading={saving}
                 fullWidth
               >
-                <Power className="w-4 h-4 mr-2" />
+                <Power className="mr-2 h-4 w-4" />
                 Enable Platform
               </Button>
             )}
           </div>
 
           {status?.updated_at && (
-            <p className="text-xs text-silver-600">
+            <p className="text-xs text-brand-blue-500">
               Last updated: {new Date(status.updated_at).toLocaleString()}
             </p>
           )}
@@ -179,4 +193,3 @@ export default function KillSwitch() {
     </Card>
   );
 }
-

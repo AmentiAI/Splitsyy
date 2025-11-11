@@ -29,16 +29,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variants = {
       primary:
-        "bg-black text-white hover:bg-gray-900 focus:ring-gray-500 active:bg-gray-800 shadow-sm",
+        "bg-gradient-to-r from-brand-green-500 via-brand-green-400 to-brand-blue-500 text-white hover:from-brand-green-400 hover:to-brand-blue-400 focus:ring-brand-blue-500 active:from-brand-green-600 active:to-brand-blue-600 shadow-lg shadow-brand-green-500/30",
       secondary:
-        "bg-silver-600 text-white hover:bg-silver-700 focus:ring-silver-500 active:bg-silver-800 shadow-sm",
+        "bg-brand-blue-600 text-white hover:bg-brand-blue-500 focus:ring-brand-blue-400 active:bg-brand-blue-700 shadow-md shadow-brand-blue-500/40",
       outline:
-        "bg-transparent border border-silver-400 text-black hover:bg-silver-100 hover:border-silver-500 focus:ring-silver-500 active:bg-silver-200",
+        "bg-transparent border border-brand-green-400 text-brand-green-600 hover:bg-brand-green-50 hover:border-brand-green-500 focus:ring-brand-green-400 active:bg-brand-green-100",
       ghost:
-        "bg-transparent text-black hover:bg-silver-100 focus:ring-silver-500 active:bg-silver-200",
+        "bg-transparent text-brand-green-600 hover:bg-brand-green-50 focus:ring-brand-green-300 active:bg-brand-green-100",
       danger:
-        "bg-black text-white hover:bg-gray-900 focus:ring-gray-500 active:bg-gray-800 shadow-sm",
-    };
+        "bg-gradient-to-r from-brand-blue-600 to-brand-blue-700 text-white hover:from-brand-blue-500 hover:to-brand-blue-600 focus:ring-brand-blue-400 active:from-brand-blue-700 active:to-brand-blue-800 shadow-md shadow-brand-blue-600/40",
+    } as const;
 
     const sizes = {
       sm: "px-3 py-2 text-sm min-h-[36px]",
@@ -57,7 +57,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && (
           <svg
-            className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+            className="-ml-1 mr-2 h-4 w-4 animate-spin text-current"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -84,6 +84,3 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
-
-
-

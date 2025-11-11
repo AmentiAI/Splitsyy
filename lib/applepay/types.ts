@@ -60,19 +60,12 @@ export interface CardProvisioningResponse {
   ephemeralPublicKey: string;
 }
 
-export type ApplePayButtonType = "plain" | "buy" | "donate" | "check-out" | "subscribe" | "add-money" | "contribute";
+export type ApplePayButtonType =
+  | "plain"
+  | "buy"
+  | "donate"
+  | "check-out"
+  | "subscribe"
+  | "add-money"
+  | "contribute";
 export type ApplePayButtonStyle = "black" | "white" | "white-outline";
-
-
-
-
-
-
-
-
-
-
-
-
-
-

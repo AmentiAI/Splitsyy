@@ -1,6 +1,6 @@
 /**
  * Mock Payment Provider
- * 
+ *
  * Simulates payment processing for development without real credentials.
  * Replace with real Stripe/Lithic implementation when ready.
  */
@@ -23,7 +23,8 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 /**
  * Generate mock ID
  */
-const generateId = (prefix: string) => `${prefix}_mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateId = (prefix: string) =>
+  `${prefix}_mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
 /**
  * Simulate payment failure based on config
@@ -40,7 +41,9 @@ export class MockPaymentProvider {
   /**
    * Create a payment intent (contribution)
    */
-  async createPaymentIntent(params: CreatePaymentIntentParams): Promise<PaymentIntent> {
+  async createPaymentIntent(
+    params: CreatePaymentIntentParams
+  ): Promise<PaymentIntent> {
     console.log("🔷 [MOCK] Creating payment intent:", params);
 
     if (PAYMENT_CONFIG.mock.simulateDelay) {
@@ -53,7 +56,11 @@ export class MockPaymentProvider {
       id: generateId("pi"),
       amount: params.amount,
       currency: params.currency,
-      status: failed ? "failed" : (PAYMENT_CONFIG.mock.autoSucceedContributions ? "succeeded" : "pending"),
+      status: failed
+        ? "failed"
+        : PAYMENT_CONFIG.mock.autoSucceedContributions
+          ? "succeeded"
+          : "pending",
       clientSecret: generateId("pi_secret"),
       metadata: {
         contributionId: params.contributionId,
@@ -91,7 +98,9 @@ export class MockPaymentProvider {
   /**
    * Create a virtual card
    */
-  async createVirtualCard(params: CreateVirtualCardParams): Promise<VirtualCard> {
+  async createVirtualCard(
+    params: CreateVirtualCardParams
+  ): Promise<VirtualCard> {
     console.log("🔷 [MOCK] Creating virtual card:", params);
 
     if (PAYMENT_CONFIG.mock.simulateDelay) {
@@ -118,7 +127,10 @@ export class MockPaymentProvider {
   /**
    * Update card status
    */
-  async updateCardStatus(cardId: string, status: "active" | "suspended" | "closed"): Promise<VirtualCard> {
+  async updateCardStatus(
+    cardId: string,
+    status: "active" | "suspended" | "closed"
+  ): Promise<VirtualCard> {
     console.log("🔷 [MOCK] Updating card status:", { cardId, status });
 
     if (PAYMENT_CONFIG.mock.simulateDelay) {
@@ -137,19 +149,25 @@ export class MockPaymentProvider {
   /**
    * Provision card to Apple Pay
    */
-  async provisionToApplePay(params: ProvisionToApplePayParams): Promise<ApplePayProvisioningData> {
-    console.log("🔷 [MOCK] Provisioning to Apple Pay:", { cardId: params.cardId });
+  async provisionToApplePay(
+    params: ProvisionToApplePayParams
+  ): Promise<ApplePayProvisioningData> {
+    console.log("🔷 [MOCK] Provisioning to Apple Pay:", {
+      cardId: params.cardId,
+    });
 
     if (PAYMENT_CONFIG.mock.simulateDelay) {
       await delay(PAYMENT_CONFIG.mock.delayMs);
     }
 
     const data: ApplePayProvisioningData = {
-      encryptedPassData: Buffer.from(JSON.stringify({
-        mock: true,
-        cardId: params.cardId,
-        timestamp: Date.now(),
-      })).toString("base64"),
+      encryptedPassData: Buffer.from(
+        JSON.stringify({
+          mock: true,
+          cardId: params.cardId,
+          timestamp: Date.now(),
+        })
+      ).toString("base64"),
       activationData: generateId("activation"),
       ephemeralPublicKey: generateId("ephemeral_key"),
     };
@@ -166,7 +184,11 @@ export class MockPaymentProvider {
     amount: number,
     merchantName: string
   ): Promise<{ approved: boolean; reason?: string }> {
-    console.log("🔷 [MOCK] Authorizing transaction:", { cardId, amount, merchantName });
+    console.log("🔷 [MOCK] Authorizing transaction:", {
+      cardId,
+      amount,
+      merchantName,
+    });
 
     if (PAYMENT_CONFIG.mock.simulateDelay) {
       await delay(500);
@@ -175,8 +197,12 @@ export class MockPaymentProvider {
     // Mock approval logic - always approve for now
     const approved = !shouldSimulateFailure();
 
-    console.log(approved ? "✅ [MOCK] Transaction approved" : "❌ [MOCK] Transaction declined");
-    
+    console.log(
+      approved
+        ? "✅ [MOCK] Transaction approved"
+        : "❌ [MOCK] Transaction declined"
+    );
+
     return {
       approved,
       reason: approved ? undefined : "Insufficient funds (mock)",
@@ -200,24 +226,12 @@ export class MockPaymentProvider {
     signature: string,
     secret: string
   ): Promise<boolean> {
-    console.log("🔷 [MOCK] Verifying webhook signature (always returns true in mock mode)");
+    console.log(
+      "🔷 [MOCK] Verifying webhook signature (always returns true in mock mode)"
+    );
     return true;
   }
 }
 
 // Export singleton instance
 export const mockPaymentProvider = new MockPaymentProvider();
-
-
-
-
-
-
-
-
-
-
-
-
-
-

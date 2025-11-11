@@ -11,7 +11,8 @@ async function confirmUserEmail(email: string) {
   console.log(`🔍 Looking for user: ${email}`);
 
   // Get user by email
-  const { data: users, error: listError } = await adminSupabase.auth.admin.listUsers();
+  const { data: users, error: listError } =
+    await adminSupabase.auth.admin.listUsers();
 
   if (listError) {
     console.error("❌ Error listing users:", listError);
@@ -35,9 +36,12 @@ async function confirmUserEmail(email: string) {
   }
 
   // Confirm the user's email
-  const { data, error } = await adminSupabase.auth.admin.updateUserById(user.id, {
-    email_confirm: true,
-  });
+  const { data, error } = await adminSupabase.auth.admin.updateUserById(
+    user.id,
+    {
+      email_confirm: true,
+    }
+  );
 
   if (error) {
     console.error("❌ Error confirming email:", error);
@@ -55,7 +59,9 @@ const email = process.argv[2];
 if (!email) {
   console.error("❌ Please provide an email address");
   console.log("\nUsage: npx tsx scripts/confirm-user-email.ts <email>");
-  console.log("Example: npx tsx scripts/confirm-user-email.ts user@example.com");
+  console.log(
+    "Example: npx tsx scripts/confirm-user-email.ts user@example.com"
+  );
   process.exit(1);
 }
 
@@ -66,14 +72,3 @@ confirmUserEmail(email)
     console.error("❌ Unexpected error:", error);
     process.exit(1);
   });
-
-
-
-
-
-
-
-
-
-
-

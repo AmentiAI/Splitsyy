@@ -17,10 +17,10 @@ export const Card: React.FC<CardProps> = ({
   const baseStyles = "bg-white rounded-lg";
 
   const variants = {
-    default: "border border-silver-300",
-    bordered: "border-2 border-silver-400",
-    elevated: "shadow-lg border border-silver-200",
-  };
+    default: "border border-brand-green-100",
+    bordered: "border-2 border-brand-green-200",
+    elevated: "shadow-lg border border-brand-blue-100",
+  } as const;
 
   const paddings = {
     none: "",
@@ -71,7 +71,10 @@ export const CardDescription: React.FC<
   React.HTMLAttributes<HTMLParagraphElement>
 > = ({ children, className = "", ...props }) => {
   return (
-    <p className={`text-sm text-silver-600 mt-1 ${className}`} {...props}>
+    <p
+      className={`mt-1 text-sm text-brand-blue-700/80 ${className}`}
+      {...props}
+    >
       {children}
     </p>
   );
@@ -95,21 +98,11 @@ export const CardFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => {
   return (
-    <div className={`mt-4 pt-4 border-t border-silver-300 ${className}`} {...props}>
+    <div
+      className={`mt-4 border-t border-brand-green-100 pt-4 ${className}`}
+      {...props}
+    >
       {children}
     </div>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-

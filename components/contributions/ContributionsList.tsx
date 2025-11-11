@@ -3,7 +3,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { formatCurrency, formatRelativeTime, getStatusVariant } from "@/lib/utils/format";
+import {
+  formatCurrency,
+  formatRelativeTime,
+  getStatusVariant,
+} from "@/lib/utils/format";
 
 interface Contribution {
   id: string;
@@ -31,7 +35,7 @@ export function ContributionsList({
           <EmptyState
             icon={
               <svg
-                className="w-12 h-12"
+                className="h-12 w-12"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -62,12 +66,14 @@ export function ContributionsList({
           {contributions.map((contribution) => (
             <div
               key={contribution.id}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex items-center justify-between rounded-lg bg-gray-50 p-4 transition-colors hover:bg-gray-100"
             >
               <div className="flex-1">
-                <p className="font-medium text-gray-900">{contribution.userName}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-gray-600 capitalize">
+                <p className="font-medium text-gray-900">
+                  {contribution.userName}
+                </p>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-xs capitalize text-gray-600">
                     {contribution.method}
                   </span>
                   <span className="text-xs text-gray-400">•</span>
@@ -77,7 +83,7 @@ export function ContributionsList({
                 </div>
               </div>
 
-              <div className="text-right flex items-center gap-3">
+              <div className="flex items-center gap-3 text-right">
                 <div>
                   <p className="font-semibold text-gray-900">
                     {formatCurrency(contribution.amount, currency)}
@@ -96,7 +102,7 @@ export function ContributionsList({
         </div>
 
         {/* Summary */}
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="mt-4 border-t border-gray-200 pt-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700">
               Total Contributed:
@@ -115,17 +121,3 @@ export function ContributionsList({
     </Card>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

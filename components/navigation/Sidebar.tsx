@@ -55,7 +55,9 @@ const quickActions = [
 export default function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
+    null
+  );
   const { isAdmin } = useAdmin();
 
   useEffect(() => {
@@ -77,75 +79,86 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className={cn(
-      "flex flex-col h-screen bg-black text-white transition-all duration-300",
-      collapsed ? "w-16" : "w-64"
-    )}>
+    <div
+      className={cn(
+        "flex h-screen flex-col bg-brand-midnight text-white transition-all duration-300",
+        collapsed ? "w-16" : "w-64"
+      )}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-silver-800">
+      <div className="flex items-center justify-between border-b border-brand-blue-900/40 p-4">
         {!collapsed && (
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-sm">S</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white">
+              <span className="text-sm font-bold text-black">S</span>
             </div>
             <span className="text-xl font-bold">Splitsy</span>
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="p-2 hover:bg-silver-900 rounded-lg transition-colors"
+          className="rounded-lg p-2 transition-colors hover:bg-brand-blue-900/50"
         >
           {collapsed ? (
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="h-5 w-5" />
           ) : (
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="h-5 w-5" />
           )}
         </button>
       </div>
 
       {/* User Profile */}
       {!collapsed && (
-        <div className="p-4 border-b border-silver-800">
+        <div className="border-b border-brand-blue-900/40 p-4">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-silver-300 rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-black" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-green-400 to-brand-blue-500">
+              <User className="h-5 w-5 text-white" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user?.name || user?.email || "User"}</p>
-              <p className="text-xs text-silver-400 truncate">{user?.email || ""}</p>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium">
+                {user?.name || user?.email || "User"}
+              </p>
+              <p className="truncate text-xs text-brand-blue-200/80">
+                {user?.email || ""}
+              </p>
             </div>
-            <button className="p-1 hover:bg-silver-900 rounded">
-              <Bell className="w-4 h-4" />
+            <button className="rounded p-1 hover:bg-brand-blue-900/50">
+              <Bell className="h-4 w-4 text-brand-blue-100" />
             </button>
           </div>
         </div>
       )}
 
       {/* Main Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 space-y-2 p-4">
         <div className="space-y-1">
           {navigationItems.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors group",
+                  "group flex items-center space-x-3 rounded-lg px-3 py-2 transition-colors",
                   isActive
-                    ? "bg-white text-black"
-                    : "text-silver-300 hover:bg-silver-900 hover:text-white"
+                    ? "bg-white text-brand-blue-700 shadow-md shadow-brand-green-500/30"
+                    : "text-brand-blue-100/70 hover:bg-brand-blue-900/60 hover:text-white"
                 )}
               >
-                <item.icon className={cn(
-                  "w-5 h-5 flex-shrink-0",
-                  isActive ? "text-black" : "text-silver-400 group-hover:text-white"
-                )} />
+                <item.icon
+                  className={cn(
+                    "h-5 w-5 flex-shrink-0",
+                    isActive
+                      ? "text-brand-blue-700"
+                      : "text-brand-blue-200 group-hover:text-white"
+                  )}
+                />
                 {!collapsed && (
                   <>
                     <span className="text-sm font-medium">{item.name}</span>
                     {item.badge && (
-                      <span className="ml-auto bg-red-500 text-xs px-2 py-1 rounded-full">
+                      <span className="ml-auto rounded-full bg-red-500 px-2 py-1 text-xs">
                         {item.badge}
                       </span>
                     )}
@@ -159,7 +172,7 @@ export default function Sidebar() {
         {/* Quick Actions */}
         {!collapsed && (
           <div className="pt-6">
-            <h3 className="text-xs font-semibold text-silver-400 uppercase tracking-wider mb-3">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-brand-blue-200/80">
               Quick Actions
             </h3>
             <div className="space-y-1">
@@ -167,9 +180,9 @@ export default function Sidebar() {
                 <Link
                   key={action.name}
                   href={action.href}
-                  className="flex items-center space-x-3 px-3 py-2 text-silver-300 hover:bg-silver-900 hover:text-white rounded-lg transition-colors group"
+                  className="group flex items-center space-x-3 rounded-lg px-3 py-2 text-brand-blue-100/80 transition-colors hover:bg-brand-blue-900/60 hover:text-white"
                 >
-                  <action.icon className="w-5 h-5 text-silver-400 group-hover:text-white" />
+                  <action.icon className="h-5 w-5 text-brand-green-300 group-hover:text-white" />
                   <span className="text-sm font-medium">{action.name}</span>
                 </Link>
               ))}
@@ -179,18 +192,18 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-silver-800">
+      <div className="border-t border-brand-blue-900/40 p-4">
         {!collapsed && (
-          <div className="flex items-center justify-between mb-3">
+          <div className="mb-3 flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-silver-400 rounded-full"></div>
-              <span className="text-xs text-silver-400">Online</span>
+              <div className="h-2 w-2 animate-pulse rounded-full bg-brand-green-400"></div>
+              <span className="text-xs text-brand-blue-200/80">Online</span>
             </div>
-            <span className="text-xs text-silver-400">v1.0.0</span>
+            <span className="text-xs text-brand-blue-200/80">v1.0.0</span>
           </div>
         )}
-        <button className="flex items-center space-x-3 w-full px-3 py-2 text-silver-300 hover:bg-silver-900 hover:text-white rounded-lg transition-colors group">
-          <LogOut className="w-5 h-5 text-silver-400 group-hover:text-white" />
+        <button className="group flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-brand-blue-100/80 transition-colors hover:bg-brand-blue-900/60 hover:text-white">
+          <LogOut className="h-5 w-5 text-brand-blue-200 group-hover:text-white" />
           {!collapsed && <span className="text-sm font-medium">Sign Out</span>}
         </button>
       </div>

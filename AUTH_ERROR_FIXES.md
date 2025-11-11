@@ -9,6 +9,7 @@ Based on the terminal errors observed, the following authentication and audit lo
 ## 1. Audit Logging IP Address Error
 
 ### Problem
+
 ```
 Audit logging error: {
   code: '22P02',
@@ -21,6 +22,7 @@ Audit logging error: {
 **Root Cause**: The audit logging system was attempting to store the string "unknown" in a PostgreSQL `inet` column type, which only accepts valid IP addresses.
 
 ### Solution
+
 **File**: `lib/supabase/audit.ts`
 
 ```typescript
@@ -33,6 +35,7 @@ if (request.ip && request.ip !== "unknown") {
 ```
 
 **Changes**:
+
 - ✅ IP addresses are now validated before being stored
 - ✅ "unknown" IPs are stored as `null` instead of the string "unknown"
 - ✅ PostgreSQL `inet` type constraint is satisfied
@@ -43,6 +46,7 @@ if (request.ip && request.ip !== "unknown") {
 ## 2. Email Confirmation Error Handling
 
 ### Problem
+
 ```
 Login error: Error [AuthApiError]: Email not confirmed
   status: 400,
@@ -52,16 +56,18 @@ Login error: Error [AuthApiError]: Email not confirmed
 **Root Cause**: Users trying to login before confirming their email received a generic "Invalid email or password" error, which was confusing.
 
 ### Solution
+
 **File**: `app/api/auth/login/route.ts`
 
 ```typescript
 // Handle specific error cases
 if (authError.status === 400 && authError.code === "email_not_confirmed") {
   return NextResponse.json(
-    { 
+    {
       error: "Please verify your email address",
-      details: "Check your inbox for a confirmation link. If you didn't receive it, you can request a new one.",
-      code: "email_not_confirmed"
+      details:
+        "Check your inbox for a confirmation link. If you didn't receive it, you can request a new one.",
+      code: "email_not_confirmed",
     },
     { status: 400 }
   );
@@ -69,6 +75,7 @@ if (authError.status === 400 && authError.code === "email_not_confirmed") {
 ```
 
 **Changes**:
+
 - ✅ Specific error message for unconfirmed emails
 - ✅ Helpful guidance on what to do next
 - ✅ Error code preserved for client-side handling
@@ -79,16 +86,18 @@ if (authError.status === 400 && authError.code === "email_not_confirmed") {
 ## 3. Enhanced Error Display in Login Form
 
 ### Problem
+
 - Error messages were displayed in a basic red box
 - No distinction between error types
 - Details field from API was not being shown
 
 ### Solution
+
 **File**: `lib/auth/utils.ts`
 
 ```typescript
 // Preserve error details if available
-const errorMessage = data.details 
+const errorMessage = data.details
   ? `${data.error}\n${data.details}`
   : data.error || "Login failed";
 const error = new Error(errorMessage) as Error & { code?: string };
@@ -99,15 +108,18 @@ throw error;
 **File**: `components/auth/LoginForm.tsx`
 
 ```tsx
-{error && (
-  <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-800 rounded-lg">
-    <div className="font-semibold mb-1">Error</div>
-    <div className="text-sm whitespace-pre-line">{error}</div>
-  </div>
-)}
+{
+  error && (
+    <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
+      <div className="mb-1 font-semibold">Error</div>
+      <div className="whitespace-pre-line text-sm">{error}</div>
+    </div>
+  );
+}
 ```
 
 **Changes**:
+
 - ✅ Better error message styling
 - ✅ Error details are now shown to users
 - ✅ Multi-line error messages display properly
@@ -118,29 +130,46 @@ throw error;
 ## 4. Improved Registration Success Message
 
 ### Problem
+
 - Generic success message after registration
 - No clear indication about email confirmation requirement
 - Users might try to login immediately and get confused
 
 ### Solution
+
 **File**: `components/auth/RegisterForm.tsx`
 
 ```tsx
-<div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
+<div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4 text-left">
   <div className="flex items-start">
-    <svg className="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+    <svg
+      className="mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+      />
     </svg>
     <div className="text-sm text-blue-800">
-      <p className="font-semibold mb-1">Check your email</p>
-      <p>We've sent a confirmation link to <strong>{formData.email}</strong></p>
-      <p className="mt-2">Click the link in the email to verify your account before signing in.</p>
+      <p className="mb-1 font-semibold">Check your email</p>
+      <p>
+        We've sent a confirmation link to <strong>{formData.email}</strong>
+      </p>
+      <p className="mt-2">
+        Click the link in the email to verify your account before signing in.
+      </p>
     </div>
   </div>
 </div>
 ```
 
 **Changes**:
+
 - ✅ Clear visual indicator (email icon)
 - ✅ Shows the email address confirmation was sent to
 - ✅ Explicit instructions to check email
@@ -152,6 +181,7 @@ throw error;
 ## Files Modified
 
 ### Backend Files
+
 1. **`lib/supabase/audit.ts`**
    - Fixed IP address handling for PostgreSQL inet type
    - Added validation to prevent "unknown" being stored
@@ -162,6 +192,7 @@ throw error;
    - Fixed IP address passing to audit log
 
 ### Frontend Files
+
 3. **`lib/auth/utils.ts`**
    - Enhanced `signIn` function to preserve error details
    - Added error code preservation
@@ -182,11 +213,13 @@ throw error;
 ## Testing Recommendations
 
 ### Test Case 1: Audit Logging
+
 1. ✅ Register a new user
 2. ✅ Verify no audit logging errors in console
 3. ✅ Check database - `audit_logs.ip_address` should be `null` or valid IP
 
 ### Test Case 2: Email Confirmation Flow
+
 1. ✅ Register a new account
 2. ✅ See success message with email confirmation instructions
 3. ✅ Try to login before confirming email
@@ -195,6 +228,7 @@ throw error;
 6. ✅ Login should now work successfully
 
 ### Test Case 3: Error Display
+
 1. ✅ Try to login with wrong password
 2. ✅ See "Invalid email or password" error in nice styling
 3. ✅ Try to login with unconfirmed email
@@ -205,6 +239,7 @@ throw error;
 ## User Flow Improvements
 
 ### Before
+
 ```
 1. User registers
 2. Sees generic "Account created" message
@@ -214,6 +249,7 @@ throw error;
 ```
 
 ### After
+
 ```
 1. User registers
 2. Sees clear success message with email icon
@@ -230,7 +266,9 @@ throw error;
 ## Database Schema Compliance
 
 ### Audit Logs Table
+
 The `ip_address` column is defined as `inet` type in PostgreSQL, which:
+
 - ✅ Only accepts valid IPv4 or IPv6 addresses
 - ✅ Can be `null` (now properly handled)
 - ✅ Rejects invalid values like "unknown" (now prevented)
@@ -240,6 +278,7 @@ The `ip_address` column is defined as `inet` type in PostgreSQL, which:
 ## Error Messages Reference
 
 ### Email Not Confirmed
+
 ```json
 {
   "error": "Please verify your email address",
@@ -249,6 +288,7 @@ The `ip_address` column is defined as `inet` type in PostgreSQL, which:
 ```
 
 ### Invalid Credentials
+
 ```json
 {
   "error": "Invalid email or password"
@@ -260,6 +300,7 @@ The `ip_address` column is defined as `inet` type in PostgreSQL, which:
 ## Future Enhancements
 
 ### Potential Improvements
+
 1. **Resend Confirmation Email**: Add button to resend confirmation email
 2. **Email Verification Status**: Show verification status in user profile
 3. **Audit Log Viewer**: Admin interface to view audit logs
@@ -277,17 +318,6 @@ All authentication and audit logging errors have been resolved:
 ✅ **Email Confirmation**: Clear, helpful error messages guide users through verification  
 ✅ **Error Display**: Improved styling and multi-line support for error messages  
 ✅ **Registration Flow**: Users clearly understand they need to verify email  
-✅ **No Linting Errors**: All code passes linting checks  
+✅ **No Linting Errors**: All code passes linting checks
 
 The authentication flow now provides a professional, user-friendly experience that guides users through the registration and login process with clear instructions and helpful error messages.
-
-
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 /**
  * Payment Service
- * 
+ *
  * Centralized payment provider abstraction.
  * Automatically uses mock provider when credentials aren't configured.
  */
@@ -47,7 +47,9 @@ export const PaymentService = {
   /**
    * Create a payment intent for a contribution
    */
-  async createPaymentIntent(params: CreatePaymentIntentParams): Promise<PaymentIntent> {
+  async createPaymentIntent(
+    params: CreatePaymentIntentParams
+  ): Promise<PaymentIntent> {
     const provider = getProvider();
     return provider.createPaymentIntent(params);
   },
@@ -63,7 +65,9 @@ export const PaymentService = {
   /**
    * Create a virtual card for a pool
    */
-  async createVirtualCard(params: CreateVirtualCardParams): Promise<VirtualCard> {
+  async createVirtualCard(
+    params: CreateVirtualCardParams
+  ): Promise<VirtualCard> {
     const provider = getProvider();
     return provider.createVirtualCard(params);
   },
@@ -82,7 +86,9 @@ export const PaymentService = {
   /**
    * Provision card to Apple Pay
    */
-  async provisionToApplePay(params: ProvisionToApplePayParams): Promise<ApplePayProvisioningData> {
+  async provisionToApplePay(
+    params: ProvisionToApplePayParams
+  ): Promise<ApplePayProvisioningData> {
     const provider = getProvider();
     return provider.provisionToApplePay(params);
   },
@@ -125,17 +131,3 @@ export const PaymentService = {
 // Export types
 export * from "./types";
 export * from "./config";
-
-
-
-
-
-
-
-
-
-
-
-
-
-

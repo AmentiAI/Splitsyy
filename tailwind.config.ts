@@ -11,17 +11,33 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        silver: {
-          50: "#f8f9fa",
-          100: "#f1f3f5",
-          200: "#e9ecef",
-          300: "#dee2e6",
-          400: "#ced4da",
-          500: "#adb5bd",
-          600: "#868e96",
-          700: "#495057",
-          800: "#343a40",
-          900: "#212529",
+        brand: {
+          green: {
+            50: "#ecfdf5",
+            100: "#d1fae5",
+            200: "#a7f3d0",
+            300: "#6ee7b7",
+            400: "#34d399",
+            500: "#10b981",
+            600: "#059669",
+            700: "#047857",
+            800: "#065f46",
+            900: "#064e3b",
+          },
+          blue: {
+            50: "#eff6ff",
+            100: "#dbeafe",
+            200: "#bfdbfe",
+            300: "#93c5fd",
+            400: "#60a5fa",
+            500: "#3b82f6",
+            600: "#2563eb",
+            700: "#1d4ed8",
+            800: "#1e40af",
+            900: "#1e3a8a",
+          },
+          midnight: "#0b1120",
+          white: "#f8fafc",
         },
       },
     },
@@ -29,4 +45,3 @@ const config: Config = {
   plugins: [],
 };
 export default config;
-

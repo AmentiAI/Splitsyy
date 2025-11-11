@@ -4,7 +4,7 @@ import { ApplePayService } from "@/lib/applepay";
 
 /**
  * POST /api/applepay/validate-merchant
- * 
+ *
  * Validates the merchant for an Apple Pay session.
  * Called by Apple Pay JS API during payment sheet initialization.
  */
@@ -33,7 +33,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate merchant with Apple
-    const merchantSession = await ApplePayService.validateMerchant(validationURL);
+    const merchantSession =
+      await ApplePayService.validateMerchant(validationURL);
 
     // Get provider info for debugging
     const providerInfo = ApplePayService.getProviderInfo();
@@ -45,9 +46,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error validating Apple Pay merchant:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to validate merchant",
-        details: error instanceof Error ? error.message : "Unknown error"
+        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
@@ -63,17 +64,3 @@ export async function GET() {
     { status: 405 }
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

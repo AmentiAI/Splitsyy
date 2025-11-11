@@ -1,11 +1,15 @@
 /**
  * Apple Pay Service
- * 
+ *
  * Centralized Apple Pay integration.
  * Automatically uses mock provider when credentials aren't configured.
  */
 
-import { isApplePayEnabled, isApplePayMockMode, APPLE_PAY_CONFIG } from "./config";
+import {
+  isApplePayEnabled,
+  isApplePayMockMode,
+  APPLE_PAY_CONFIG,
+} from "./config";
 import { mockApplePayProvider } from "./mock-provider";
 import type {
   ApplePayPaymentToken,
@@ -23,7 +27,9 @@ const getProvider = () => {
   }
 
   // TODO: Add real Apple Pay provider when credentials are configured
-  console.log("🍎 Using MOCK Apple Pay provider (real provider not yet implemented)");
+  console.log(
+    "🍎 Using MOCK Apple Pay provider (real provider not yet implemented)"
+  );
   return mockApplePayProvider;
 };
 
@@ -34,7 +40,9 @@ export const ApplePayService = {
   /**
    * Validate merchant for Apple Pay session
    */
-  async validateMerchant(validationURL: string): Promise<ApplePayMerchantValidation> {
+  async validateMerchant(
+    validationURL: string
+  ): Promise<ApplePayMerchantValidation> {
     const provider = getProvider();
     return provider.validateMerchant(validationURL);
   },
@@ -59,7 +67,12 @@ export const ApplePayService = {
     nonceSignature: string
   ): Promise<CardProvisioningResponse> {
     const provider = getProvider();
-    return provider.provisionCardToWallet(cardId, certificates, nonce, nonceSignature);
+    return provider.provisionCardToWallet(
+      cardId,
+      certificates,
+      nonce,
+      nonceSignature
+    );
   },
 
   /**
@@ -94,17 +107,3 @@ export const ApplePayService = {
 // Export types and config
 export * from "./types";
 export * from "./config";
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,6 +7,7 @@ Your Supabase project is now configured with MCP support, allowing AI assistants
 ## What is MCP?
 
 The Model Context Protocol (MCP) allows AI tools to:
+
 - Query your database schema
 - Execute SQL queries using natural language
 - Inspect table structures and relationships
@@ -15,6 +16,7 @@ The Model Context Protocol (MCP) allows AI tools to:
 ## Configuration Files
 
 ### 1. `.cursor/mcp.json`
+
 ```json
 {
   "mcpServers": {
@@ -28,6 +30,7 @@ The Model Context Protocol (MCP) allows AI tools to:
 This file tells Cursor to connect to the Supabase MCP server.
 
 ### 2. `.env.local` (you need to create this)
+
 ```env
 # Supabase Configuration
 NEXT_PUBLIC_SUPABASE_URL=your-project-url-here
@@ -40,6 +43,7 @@ NODE_ENV=development
 ```
 
 **Get your keys from:**
+
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
 2. Select your project
 3. Go to **Settings** → **API**
@@ -51,17 +55,22 @@ NODE_ENV=development
 ## Next Steps
 
 ### 1. Complete Environment Setup
+
 Create `.env.local` in your project root with the values above.
 
 ### 2. Authenticate MCP (First Time Only)
+
 When you restart Cursor:
+
 1. A browser window will open
 2. Log in to your Supabase account
 3. Select the organization containing your "Splitsy" project
 4. Approve the MCP connection
 
 ### 3. Test the Connection
+
 Once authenticated, you can ask me (or any AI assistant in Cursor) to:
+
 - "Show me the users table schema"
 - "Query all groups from the database"
 - "What tables exist in my database?"
@@ -89,18 +98,21 @@ Once authenticated, you can ask me (or any AI assistant in Cursor) to:
 ## Troubleshooting
 
 ### MCP Not Connecting
+
 1. Make sure `.env.local` exists with correct values
 2. Restart Cursor completely
 3. Check that you're logged into the correct Supabase account
 4. Verify your project is in the selected organization
 
 ### Authentication Failed
+
 1. Go to [https://supabase.com/dashboard](https://supabase.com/dashboard)
 2. Make sure you're logged in
 3. Select the correct organization
 4. Re-authenticate the MCP connection
 
 ### Query Errors
+
 1. Verify your database migrations ran successfully
 2. Check RLS (Row Level Security) policies
 3. Ensure you have proper permissions
@@ -116,6 +128,7 @@ If you prefer not to use MCP, you can still interact with your database through:
 ## What You Can Do Now
 
 With MCP configured, you can:
+
 - ✅ Ask me to query your database
 - ✅ Get table schemas and relationships
 - ✅ Execute SQL commands via natural language
@@ -125,6 +138,7 @@ With MCP configured, you can:
 ---
 
 **Ready to test?** Try asking me:
+
 - "What tables do I have in my Supabase database?"
 - "Show me the schema for the users table"
 
@@ -139,17 +153,3 @@ With MCP configured, you can:
 ---
 
 Last updated: October 10, 2025
-
-
-
-
-
-
-
-
-
-
-
-
-
-

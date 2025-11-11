@@ -11,17 +11,20 @@ This guide helps you bypass email verification during development so you can acc
 **New users** will be automatically confirmed in development mode.
 
 When you register a new account:
+
 1. User is created in Supabase Auth
 2. **In development mode**, email is auto-confirmed via admin API
 3. You can login immediately - no email verification needed!
 
 **How it works**:
+
 - File: `app/api/auth/register/route.ts`
 - Automatically detects `NODE_ENV === "development"`
 - Uses admin client to confirm email after registration
 - You'll see: `✅ Email auto-confirmed in development mode` in console
 
 **To test**:
+
 ```bash
 # Register a new user (they'll be auto-confirmed)
 # Then login immediately - it will work!
@@ -42,6 +45,7 @@ npx tsx scripts/confirm-user-email.ts amentiaiserv@gmail.com
 ```
 
 **What it does**:
+
 - Looks up the user by email
 - Confirms their email using admin API
 - Shows success message
@@ -87,6 +91,7 @@ Manually confirm a user in Supabase Studio:
 Your local Supabase config already has email confirmations disabled:
 
 **File**: `supabase/config.toml`
+
 ```toml
 [auth.email]
 enable_signup = true
@@ -95,6 +100,7 @@ enable_confirmations = false  # ← Already disabled!
 ```
 
 If this isn't working, restart your Supabase instance:
+
 ```bash
 npx supabase stop
 npx supabase start
@@ -105,12 +111,14 @@ npx supabase start
 ## 🚀 Quick Start for New Development
 
 ### Option A: Fresh Start
+
 1. Delete existing users (if any)
 2. Register a new account
 3. ✅ Auto-confirmed in development mode
 4. Login immediately
 
 ### Option B: Confirm Existing User
+
 1. Run: `npx tsx scripts/confirm-user-email.ts your-email@example.com`
 2. Login immediately
 
@@ -119,6 +127,7 @@ npx supabase start
 ## 🧪 Testing
 
 ### Test Auto-Confirmation
+
 ```bash
 # 1. Start your dev server
 npm run dev
@@ -136,12 +145,12 @@ npm run dev
 
 ## 📋 Current Setup Summary
 
-| Feature | Status | Location |
-|---------|--------|----------|
-| Auto-confirm on registration | ✅ Active | `app/api/auth/register/route.ts` |
-| Manual confirmation script | ✅ Available | `scripts/confirm-user-email.ts` |
-| Development bypass in login | ✅ Active | `app/api/auth/login/route.ts` |
-| Local config disabled | ✅ Set | `supabase/config.toml` |
+| Feature                      | Status       | Location                         |
+| ---------------------------- | ------------ | -------------------------------- |
+| Auto-confirm on registration | ✅ Active    | `app/api/auth/register/route.ts` |
+| Manual confirmation script   | ✅ Available | `scripts/confirm-user-email.ts`  |
+| Development bypass in login  | ✅ Active    | `app/api/auth/login/route.ts`    |
+| Local config disabled        | ✅ Set       | `supabase/config.toml`           |
 
 ---
 
@@ -156,6 +165,7 @@ if (process.env.NODE_ENV === "development") {
 ```
 
 In production:
+
 - Email verification is required
 - No auto-confirmation happens
 - Security is maintained
@@ -167,16 +177,19 @@ In production:
 ### "Email not confirmed" error when logging in
 
 **For existing users:**
+
 ```bash
 npx tsx scripts/confirm-user-email.ts your-email@example.com
 ```
 
 **For new registrations:**
+
 - Make sure you're in development mode (`npm run dev`)
 - Check console for auto-confirmation message
 - If not working, use the manual confirmation script
 
 ### Script not found error
+
 ```bash
 # Install tsx if needed
 npm install -D tsx
@@ -186,6 +199,7 @@ npx tsx scripts/confirm-user-email.ts your-email@example.com
 ```
 
 ### Can't find user
+
 ```bash
 # List all users
 npx tsx scripts/confirm-user-email.ts invalid@email.com
@@ -200,6 +214,7 @@ npx tsx scripts/confirm-user-email.ts invalid@email.com
 ### For You Right Now:
 
 1. **Confirm your existing account:**
+
    ```bash
    npx tsx scripts/confirm-user-email.ts amentiaiserv@gmail.com
    ```
@@ -219,6 +234,7 @@ npx tsx scripts/confirm-user-email.ts invalid@email.com
 ## 🎉 Result
 
 You can now:
+
 - ✅ Register new accounts (auto-confirmed)
 - ✅ Confirm existing accounts (one-time script)
 - ✅ Login without email verification
@@ -230,20 +246,10 @@ You can now:
 ## Need Help?
 
 If you're still having issues, check:
+
 1. Are you in development mode? (`NODE_ENV=development`)
 2. Is Supabase running? (`npx supabase status`)
 3. Check console for auto-confirmation messages
 4. Try the manual confirmation script
 
 You're all set to work on the site! 🚀
-
-
-
-
-
-
-
-
-
-
-

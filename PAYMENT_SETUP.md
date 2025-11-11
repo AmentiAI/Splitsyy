@@ -20,6 +20,7 @@ The payment integration layer is **ready** but currently running in **MOCK MODE*
 The platform is currently configured to use a mock payment provider that simulates payment processing without requiring real credentials.
 
 ### Features:
+
 - ✅ Simulates payment intents
 - ✅ Simulates virtual card creation
 - ✅ Simulates Apple Pay provisioning
@@ -29,6 +30,7 @@ The platform is currently configured to use a mock payment provider that simulat
 ### Configuration:
 
 Mock mode is automatically enabled when:
+
 - `PAYMENT_PROVIDER_ENABLED` is not set to `"true"`, OR
 - `PAYMENT_PROVIDER` is set to `"mock"`
 
@@ -63,6 +65,7 @@ mock: {
 #### 1. Get API Keys
 
 From your Stripe Dashboard:
+
 - **Secret Key**: `Settings > API keys > Secret key`
 - **Publishable Key**: `Settings > API keys > Publishable key`
 - **Webhook Secret**: `Developers > Webhooks > Add endpoint`
@@ -120,6 +123,7 @@ Webhooks are automatically verified when `STRIPE_WEBHOOK_SECRET` is configured.
 Without the secret, webhooks will still work but **ARE NOT SECURE** for production.
 
 ### Required for Production:
+
 - ✅ HTTPS enabled (Vercel provides this automatically)
 - ✅ Webhook secret configured
 - ✅ API keys are secure and not committed to git
@@ -182,6 +186,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 ### 3. Verification
 
 Test the integration:
+
 - ✅ Contributions process correctly
 - ✅ Virtual cards are created
 - ✅ Webhooks are received and verified
@@ -231,6 +236,7 @@ Test the integration:
 ### "Payment provider not configured" error
 
 **Solution**: Ensure environment variables are set:
+
 ```bash
 PAYMENT_PROVIDER_ENABLED=true
 PAYMENT_PROVIDER=stripe
@@ -240,12 +246,14 @@ STRIPE_SECRET_KEY=sk_...
 ### Webhooks not working
 
 **Check**:
+
 1. Webhook URL is correct
 2. Webhook secret is configured
 3. Events are selected in Stripe Dashboard
 4. Server is accessible (HTTPS)
 
 **Test locally**:
+
 ```bash
 stripe listen --forward-to localhost:3000/api/webhooks/payments
 ```
@@ -253,6 +261,7 @@ stripe listen --forward-to localhost:3000/api/webhooks/payments
 ### Cards not being created
 
 **Requirements**:
+
 1. Stripe Issuing must be enabled
 2. Business verification may be required
 3. Pool must have successful contributions
@@ -355,11 +364,13 @@ await PaymentService.provisionToApplePay({
 ## 📞 Support
 
 ### Stripe Support:
+
 - Dashboard: [dashboard.stripe.com](https://dashboard.stripe.com)
 - Docs: [stripe.com/docs](https://stripe.com/docs)
 - Support: support@stripe.com
 
 ### Splitsy Support:
+
 - Check audit logs for payment activity
 - Review webhook logs in Stripe Dashboard
 - Check application logs for errors
@@ -369,17 +380,3 @@ await PaymentService.provisionToApplePay({
 **Last Updated:** October 10, 2025
 
 **Status:** ✅ Ready for configuration
-
-
-
-
-
-
-
-
-
-
-
-
-
-

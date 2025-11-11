@@ -6,19 +6,27 @@ import { z } from "zod";
 const createSplitSchema = z.object({
   description: z.string().min(1, "Description is required"),
   totalAmount: z.number().positive("Total amount must be positive"),
-  participants: z.array(z.object({
-    name: z.string().min(1, "Name is required"),
-    phone: z.string().min(10, "Valid phone number is required"),
-    amount: z.number().positive("Amount must be positive")
-  })).min(1, "At least one participant is required").max(8, "Maximum 8 participants allowed")
+  participants: z
+    .array(
+      z.object({
+        name: z.string().min(1, "Name is required"),
+        phone: z.string().min(10, "Valid phone number is required"),
+        amount: z.number().positive("Amount must be positive"),
+      })
+    )
+    .min(1, "At least one participant is required")
+    .max(8, "Maximum 8 participants allowed"),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -28,41 +36,45 @@ export async function POST(request: NextRequest) {
 
     // Create the split record
     const { data: split, error: splitError } = await supabase
-      .from('splits')
+      .from("splits")
       .insert({
         created_by: user.id,
         description: validatedData.description,
         total_amount: validatedData.totalAmount,
-        status: 'pending'
+        status: "pending",
       })
       .select()
       .single();
 
     if (splitError) {
-      console.error('Error creating split:', splitError);
-      return NextResponse.json({ error: "Failed to create split" }, { status: 500 });
+      console.error("Error creating split:", splitError);
+      return NextResponse.json(
+        { error: "Failed to create split" },
+        { status: 500 }
+      );
     }
 
     // Create participant records and generate payment links
     const participants = await Promise.all(
       validatedData.participants.map(async (participant) => {
-        const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${split.id}/${participant.phone.replace(/\D/g, '')}`;
-        
-        const { data: participantData, error: participantError } = await supabase
-          .from('split_participants')
-          .insert({
-            split_id: split.id,
-            name: participant.name,
-            phone: participant.phone,
-            amount: participant.amount,
-            payment_link: paymentLink,
-            status: 'pending'
-          })
-          .select()
-          .single();
+        const paymentLink = `${process.env.NEXT_PUBLIC_APP_URL}/pay/${split.id}/${participant.phone.replace(/\D/g, "")}`;
+
+        const { data: participantData, error: participantError } =
+          await supabase
+            .from("split_participants")
+            .insert({
+              split_id: split.id,
+              name: participant.name,
+              phone: participant.phone,
+              amount: participant.amount,
+              payment_link: paymentLink,
+              status: "pending",
+            })
+            .select()
+            .single();
 
         if (participantError) {
-          console.error('Error creating participant:', participantError);
+          console.error("Error creating participant:", participantError);
           throw new Error(`Failed to create participant: ${participant.name}`);
         }
 
@@ -80,11 +92,14 @@ export async function POST(request: NextRequest) {
           participant.payment_link,
           participant.amount
         );
-        
+
         if (!result.success) {
-          console.error(`Failed to send SMS to ${participant.name}:`, result.error);
+          console.error(
+            `Failed to send SMS to ${participant.name}:`,
+            result.error
+          );
         }
-        
+
         return { participant: participant.name, success: result.success };
       } catch (error) {
         console.error(`SMS error for ${participant.name}:`, error);
@@ -93,10 +108,10 @@ export async function POST(request: NextRequest) {
     });
 
     const smsResults = await Promise.all(smsPromises);
-    const failedSMS = smsResults.filter(r => !r.success);
-    
+    const failedSMS = smsResults.filter((r) => !r.success);
+
     if (failedSMS.length > 0) {
-      console.warn('Some SMS messages failed to send:', failedSMS);
+      console.warn("Some SMS messages failed to send:", failedSMS);
     }
 
     return NextResponse.json({
@@ -105,20 +120,19 @@ export async function POST(request: NextRequest) {
         id: split.id,
         description: split.description,
         totalAmount: split.total_amount,
-        participants: participants.map(p => ({
+        participants: participants.map((p) => ({
           id: p.id,
           name: p.name,
           phone: p.phone,
           amount: p.amount,
           paymentLink: p.payment_link,
-          status: p.status
-        }))
-      }
+          status: p.status,
+        })),
+      },
     });
-
   } catch (error) {
-    console.error('Error in splits API:', error);
-    
+    console.error("Error in splits API:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.issues },
@@ -136,42 +150,83 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get the current user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get user's splits
+    // Get user's splits - first get splits, then get participants separately to avoid RLS issues
     const { data: splits, error: splitsError } = await supabase
-      .from('splits')
-      .select(`
-        *,
-        split_participants (
-          id,
-          name,
-          phone,
-          amount,
-          status,
-          payment_link,
-          user_id
-        )
-      `)
-      .eq('created_by', user.id)
-      .order('created_at', { ascending: false });
+      .from("splits")
+      .select("*")
+      .eq("created_by", user.id)
+      .order("created_at", { ascending: false });
 
     if (splitsError) {
-      console.error('Error fetching splits:', splitsError);
-      return NextResponse.json({ error: "Failed to fetch splits" }, { status: 500 });
+      console.error("Error fetching splits:", splitsError);
+      console.error("Error details:", JSON.stringify(splitsError, null, 2));
+
+      // Check if the error is about missing table
+      const errorMessage = splitsError.message || "";
+      const isTableMissing =
+        errorMessage.includes("Could not find the table") ||
+        (errorMessage.includes("relation") &&
+          errorMessage.includes("does not exist"));
+
+      if (isTableMissing) {
+        return NextResponse.json(
+          {
+            error: "Database tables not set up",
+            details:
+              "The splits table doesn't exist. Please run the database migration in Supabase SQL Editor. See supabase/migrations/combined_setup_splits.sql",
+          },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json(
+        {
+          error: "Failed to fetch splits",
+          details: splitsError.message || "Database query failed",
+        },
+        { status: 500 }
+      );
     }
 
-    return NextResponse.json({ splits });
+    // Get participants for each split separately
+    const splitsWithParticipants = await Promise.all(
+      (splits || []).map(async (split) => {
+        const { data: participants, error: participantsError } = await supabase
+          .from("split_participants")
+          .select("id, name, phone, amount, status, payment_link, user_id")
+          .eq("split_id", split.id);
 
+        if (participantsError) {
+          console.warn(
+            `Error fetching participants for split ${split.id}:`,
+            participantsError
+          );
+        }
+
+        return {
+          ...split,
+          split_participants: participants || [],
+        };
+      })
+    );
+
+    return NextResponse.json({ splits: splitsWithParticipants });
   } catch (error) {
-    console.error('Error in splits GET API:', error);
+    console.error("Error in splits GET API:", error);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error", details: errorMessage },
       { status: 500 }
     );
   }

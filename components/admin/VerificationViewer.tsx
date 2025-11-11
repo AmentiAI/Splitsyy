@@ -6,12 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Badge } from "@/components/ui/Badge";
-import { Alert } from "@/components/ui/Alert";
 import {
   Shield,
   Search,
-  Eye,
-  EyeOff,
   Calendar,
   MapPin,
   CreditCard,
@@ -72,8 +69,6 @@ export default function VerificationViewer() {
     status: "",
     search: "",
   });
-  const [showSsn, setShowSsn] = useState<Record<string, boolean>>({});
-  const [showId, setShowId] = useState<Record<string, boolean>>({});
   const [editingNotes, setEditingNotes] = useState<Record<string, string>>({});
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 20;
@@ -92,7 +87,9 @@ export default function VerificationViewer() {
       params.append("limit", pageSize.toString());
       params.append("offset", (currentPage * pageSize).toString());
 
-      const response = await fetch(`/api/admin/verification?${params.toString()}`);
+      const response = await fetch(
+        `/api/admin/verification?${params.toString()}`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch verifications");
       }
@@ -116,7 +113,9 @@ export default function VerificationViewer() {
         verifications,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load verifications");
+      setError(
+        err instanceof Error ? err.message : "Failed to load verifications"
+      );
     } finally {
       setLoading(false);
     }
@@ -130,9 +129,10 @@ export default function VerificationViewer() {
         body: JSON.stringify({
           verificationId,
           provider_status: status,
-          verification_completed_at: status === "approved" || status === "rejected" 
-            ? new Date().toISOString() 
-            : null,
+          verification_completed_at:
+            status === "approved" || status === "rejected"
+              ? new Date().toISOString()
+              : null,
         }),
       });
 
@@ -184,12 +184,12 @@ export default function VerificationViewer() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "approved":
-        return <CheckCircle className="w-4 h-4" />;
+        return <CheckCircle className="h-4 w-4" />;
       case "rejected":
-        return <XCircle className="w-4 h-4" />;
+        return <XCircle className="h-4 w-4" />;
       case "pending":
       case "processing":
-        return <Clock className="w-4 h-4" />;
+        return <Clock className="h-4 w-4" />;
       default:
         return null;
     }
@@ -199,9 +199,9 @@ export default function VerificationViewer() {
     return (
       <Card className="p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-          <div className="h-10 bg-gray-200 rounded"></div>
-          <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="h-4 w-1/4 rounded bg-gray-200"></div>
+          <div className="h-10 rounded bg-gray-200"></div>
+          <div className="h-64 rounded bg-gray-200"></div>
         </div>
       </Card>
     );
@@ -209,22 +209,18 @@ export default function VerificationViewer() {
 
   return (
     <div className="space-y-4">
-      <Alert variant="warning" className="mb-4">
-        <Shield className="w-4 h-4 mr-2" />
-        <strong>Security Notice:</strong> This section contains sensitive PII including Social Security Numbers. 
-        Access is logged and monitored.
-      </Alert>
-
       {/* Filters */}
       <Card className="p-6">
-        <div className="flex flex-col lg:flex-row gap-4 mb-4">
+        <div className="mb-4 flex flex-col gap-4 lg:flex-row">
           <div className="flex-1">
             <Input
               label="Search"
               placeholder="Search by email, name, or verification ID..."
               value={filters.search}
-              onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              leftIcon={<Search className="w-4 h-4" />}
+              onChange={(e) =>
+                setFilters({ ...filters, search: e.target.value })
+              }
+              leftIcon={<Search className="h-4 w-4" />}
               fullWidth
             />
           </div>
@@ -258,52 +254,37 @@ export default function VerificationViewer() {
                   <h3 className="font-semibold text-gray-900">
                     {verification.users?.name || "Unknown User"}
                   </h3>
-                  <p className="text-sm text-gray-600">{verification.users?.email}</p>
-                  <Badge className={getStatusColor(verification.users?.kyc_status || "")}>
+                  <p className="text-sm text-gray-600">
+                    {verification.users?.email}
+                  </p>
+                  <Badge
+                    className={getStatusColor(
+                      verification.users?.kyc_status || ""
+                    )}
+                  >
                     KYC: {verification.users?.kyc_status}
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className={getStatusColor(verification.provider_status)}>
+                  <Badge
+                    className={getStatusColor(verification.provider_status)}
+                  >
                     {getStatusIcon(verification.provider_status)}
                     <span className="ml-1">{verification.provider_status}</span>
                   </Badge>
                 </div>
               </div>
 
-              {/* SSN Section */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium text-red-900">Social Security Number</label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowSsn({ ...showSsn, [verification.id]: !showSsn[verification.id] })}
-                  >
-                    {showSsn[verification.id] ? (
-                      <>
-                        <EyeOff className="w-4 h-4 mr-1" />
-                        Hide
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="w-4 h-4 mr-1" />
-                        Show
-                      </>
-                    )}
-                  </Button>
-                </div>
-                <p className="text-lg font-mono text-red-900">
-                  {showSsn[verification.id] ? verification.ssn_full : verification.ssn_masked}
-                </p>
-              </div>
-
               {/* Personal Information */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className="text-xs text-gray-500">Date of Birth</label>
                   <p className="text-sm font-medium">
-                    {verification.date_of_birth ? new Date(verification.date_of_birth).toLocaleDateString() : "N/A"}
+                    {verification.date_of_birth
+                      ? new Date(
+                          verification.date_of_birth
+                        ).toLocaleDateString()
+                      : "N/A"}
                   </p>
                 </div>
                 <div>
@@ -313,7 +294,8 @@ export default function VerificationViewer() {
                       <>
                         {verification.address_line1}
                         {verification.city && `, ${verification.city}`}
-                        {verification.state && `, ${verification.state} ${verification.zip_code || ""}`}
+                        {verification.state &&
+                          `, ${verification.state} ${verification.zip_code || ""}`}
                       </>
                     ) : (
                       "N/A"
@@ -322,65 +304,30 @@ export default function VerificationViewer() {
                 </div>
               </div>
 
-              {/* ID Document */}
-              {verification.id_type && (
-                <div className="border-t border-gray-200 pt-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <FileText className="w-4 h-4 text-gray-400" />
-                    <h4 className="font-medium text-gray-900">ID Document</h4>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-xs text-gray-500">Type</label>
-                      <p className="text-sm font-medium capitalize">
-                        {verification.id_type?.replace("_", " ")}
-                      </p>
-                    </div>
-                    <div>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-xs text-gray-500">ID Number</label>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setShowId({ ...showId, [verification.id]: !showId[verification.id] })}
-                        >
-                          {showId[verification.id] ? (
-                            <>
-                              <EyeOff className="w-4 h-4 mr-1" />
-                              Hide
-                            </>
-                          ) : (
-                            <>
-                              <Eye className="w-4 h-4 mr-1" />
-                              Show
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                      <p className="text-sm font-mono">
-                        {showId[verification.id] ? verification.id_number_full : verification.id_number_masked}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Provider Information */}
               <div className="border-t border-gray-200 pt-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
                   <div>
                     <label className="text-xs text-gray-500">Provider</label>
-                    <p className="font-medium capitalize">{verification.provider?.replace("_", " ")}</p>
+                    <p className="font-medium capitalize">
+                      {verification.provider?.replace("_", " ")}
+                    </p>
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500">Verification ID</label>
-                    <p className="font-mono text-xs">{verification.provider_verification_id || "N/A"}</p>
+                    <label className="text-xs text-gray-500">
+                      Verification ID
+                    </label>
+                    <p className="font-mono text-xs">
+                      {verification.provider_verification_id || "N/A"}
+                    </p>
                   </div>
                   <div>
                     <label className="text-xs text-gray-500">Submitted</label>
                     <p className="text-sm">
                       {verification.verification_submitted_at
-                        ? new Date(verification.verification_submitted_at).toLocaleString()
+                        ? new Date(
+                            verification.verification_submitted_at
+                          ).toLocaleString()
                         : "N/A"}
                     </p>
                   </div>
@@ -388,13 +335,15 @@ export default function VerificationViewer() {
                     <label className="text-xs text-gray-500">Completed</label>
                     <p className="text-sm">
                       {verification.verification_completed_at
-                        ? new Date(verification.verification_completed_at).toLocaleString()
+                        ? new Date(
+                            verification.verification_completed_at
+                          ).toLocaleString()
                         : "N/A"}
                     </p>
                   </div>
                 </div>
                 {verification.provider_error && (
-                  <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs text-red-800">
+                  <div className="mt-2 rounded border border-red-200 bg-red-50 p-2 text-xs text-red-800">
                     Error: {verification.provider_error}
                   </div>
                 )}
@@ -402,13 +351,22 @@ export default function VerificationViewer() {
 
               {/* Admin Notes */}
               <div className="border-t border-gray-200 pt-4">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Admin Notes</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Admin Notes
+                </label>
                 <textarea
-                  className="w-full p-2 border border-gray-300 rounded-lg text-sm"
+                  className="w-full rounded-lg border border-gray-300 p-2 text-sm"
                   rows={2}
-                  value={editingNotes[verification.id] ?? verification.admin_notes ?? ""}
+                  value={
+                    editingNotes[verification.id] ??
+                    verification.admin_notes ??
+                    ""
+                  }
                   onChange={(e) =>
-                    setEditingNotes({ ...editingNotes, [verification.id]: e.target.value })
+                    setEditingNotes({
+                      ...editingNotes,
+                      [verification.id]: e.target.value,
+                    })
                   }
                   placeholder="Add notes about this verification..."
                 />
@@ -416,27 +374,33 @@ export default function VerificationViewer() {
                   size="sm"
                   className="mt-2"
                   onClick={() => handleSaveNotes(verification.id)}
-                  disabled={editingNotes[verification.id] === verification.admin_notes}
+                  disabled={
+                    editingNotes[verification.id] === verification.admin_notes
+                  }
                 >
                   Save Notes
                 </Button>
               </div>
 
               {/* Actions */}
-              <div className="border-t border-gray-200 pt-4 flex gap-2">
+              <div className="flex gap-2 border-t border-gray-200 pt-4">
                 {verification.provider_status === "pending" && (
                   <>
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleUpdateStatus(verification.id, "approved")}
+                      onClick={() =>
+                        handleUpdateStatus(verification.id, "approved")
+                      }
                     >
                       Approve
                     </Button>
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleUpdateStatus(verification.id, "rejected")}
+                      onClick={() =>
+                        handleUpdateStatus(verification.id, "rejected")
+                      }
                     >
                       Reject
                     </Button>
@@ -451,7 +415,7 @@ export default function VerificationViewer() {
       {data && data.verifications.length === 0 && (
         <Card className="p-12">
           <div className="text-center">
-            <Shield className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <Shield className="mx-auto mb-4 h-16 w-16 text-gray-400" />
             <p className="text-gray-600">No verifications found</p>
           </div>
         </Card>
@@ -488,5 +452,3 @@ export default function VerificationViewer() {
     </div>
   );
 }
-
-

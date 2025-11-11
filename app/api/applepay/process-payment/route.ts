@@ -5,7 +5,7 @@ import { logAuditEvent } from "@/lib/supabase/audit";
 
 /**
  * POST /api/applepay/process-payment
- * 
+ *
  * Processes an Apple Pay payment token.
  * Called after user authorizes payment in Apple Pay sheet.
  */
@@ -62,14 +62,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Process the Apple Pay payment token
-    const paymentResult = await ApplePayService.processPaymentToken(paymentToken);
+    const paymentResult =
+      await ApplePayService.processPaymentToken(paymentToken);
 
     // Update contribution status based on payment result
     const newStatus = paymentResult.success ? "succeeded" : "failed";
-    
+
     const { error: updateError } = await supabase
       .from("contributions")
-      .update({ 
+      .update({
         status: newStatus,
       })
       .eq("id", contributionId);
@@ -85,7 +86,9 @@ export async function POST(request: NextRequest) {
     // Log audit event
     await logAuditEvent(
       session.user.id,
-      paymentResult.success ? "contribution.applepay_success" : "contribution.applepay_failed",
+      paymentResult.success
+        ? "contribution.applepay_success"
+        : "contribution.applepay_failed",
       "contribution",
       contributionId,
       {
@@ -109,9 +112,9 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Error processing Apple Pay payment:", error);
     return NextResponse.json(
-      { 
+      {
         error: "Failed to process payment",
-        details: error instanceof Error ? error.message : "Unknown error"
+        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }
     );
@@ -127,17 +130,3 @@ export async function GET() {
     { status: 405 }
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -22,6 +22,7 @@ The Apple Pay integration layer is **ready** but currently running in **MOCK MOD
 The platform is configured to use a mock Apple Pay provider that simulates Apple Pay functionality without requiring Apple Developer credentials.
 
 ### Features:
+
 - ✅ Simulates merchant validation
 - ✅ Simulates payment authorization
 - ✅ Simulates card provisioning to Apple Wallet
@@ -82,12 +83,14 @@ The platform is configured to use a mock Apple Pay provider that simulates Apple
 
 1. In Merchant ID settings, click "Create Certificate"
 2. Follow CSR (Certificate Signing Request) instructions:
+
    ```bash
    # On Mac/Linux:
    openssl req -newkey rsa:2048 -keyout merchant.key -out merchant.csr
-   
+
    # Enter details when prompted
    ```
+
 3. Upload the CSR file
 4. Download the certificate (.cer file)
 5. Convert to PEM format:
@@ -99,9 +102,9 @@ The platform is configured to use a mock Apple Pay provider that simulates Apple
 
 1. Download the domain verification file (already included in the project):
    - Located at `public/.well-known/apple-developer-merchantid-domain-association`
-   
 2. Deploy your website (must be HTTPS)
 3. Verify the file is accessible at:
+
    ```
    https://yourdomain.com/.well-known/apple-developer-merchantid-domain-association
    ```
@@ -232,6 +235,7 @@ npm run dev
 ### Development Testing (With Apple Pay):
 
 Requirements:
+
 - HTTPS enabled (use ngrok or deploy to Vercel)
 - Apple device or Safari on Mac
 - Apple Developer account configured
@@ -268,6 +272,7 @@ vercel
 Validates merchant for Apple Pay session.
 
 **Request:**
+
 ```json
 {
   "validationURL": "https://apple-pay-gateway.apple.com/..."
@@ -275,6 +280,7 @@ Validates merchant for Apple Pay session.
 ```
 
 **Response:**
+
 ```json
 {
   "merchantSession": {
@@ -295,6 +301,7 @@ Validates merchant for Apple Pay session.
 Processes Apple Pay payment token.
 
 **Request:**
+
 ```json
 {
   "paymentToken": { ... },
@@ -304,6 +311,7 @@ Processes Apple Pay payment token.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -320,16 +328,19 @@ Processes Apple Pay payment token.
 ## 🔐 Security Considerations
 
 ### Domain Verification:
+
 - ✅ Domain must be verified with Apple
 - ✅ HTTPS required
 - ✅ Verification file must be accessible
 
 ### Merchant Validation:
+
 - ✅ Called server-side only
 - ✅ Never expose certificates to client
 - ✅ Use secure certificate storage
 
 ### Payment Processing:
+
 - ✅ Payment tokens are single-use
 - ✅ Validate token before processing
 - ✅ Check contribution ownership
@@ -342,11 +353,13 @@ Processes Apple Pay payment token.
 ### "Apple Pay is not available"
 
 **Possible causes:**
+
 1. Not using Safari or Apple device
 2. No Apple Pay cards in Wallet
 3. Apple Pay disabled in system settings
 
 **Solution:**
+
 - Use Safari on Mac (with Touch ID) or iOS device
 - Add at least one card to Apple Wallet
 - Check System Preferences > Wallet & Apple Pay
@@ -354,11 +367,13 @@ Processes Apple Pay payment token.
 ### "Domain verification failed"
 
 **Possible causes:**
+
 1. Domain not verified in Apple Developer Portal
 2. Verification file not accessible
 3. Not using HTTPS
 
 **Solution:**
+
 ```bash
 # Test file accessibility
 curl https://yourdomain.com/.well-known/apple-developer-merchantid-domain-association
@@ -369,11 +384,13 @@ curl https://yourdomain.com/.well-known/apple-developer-merchantid-domain-associ
 ### "Merchant validation failed"
 
 **Possible causes:**
+
 1. Incorrect Merchant ID
 2. Certificate issues
 3. Domain not registered
 
 **Solution:**
+
 - Verify Merchant ID matches Apple Developer Portal
 - Check certificate is valid and not expired
 - Ensure domain is added to Merchant ID
@@ -381,9 +398,11 @@ curl https://yourdomain.com/.well-known/apple-developer-merchantid-domain-associ
 ### Mock mode always active
 
 **Cause:**
+
 - `APPLE_PAY_ENABLED` not set to "true"
 
 **Solution:**
+
 ```bash
 # Add to .env.local
 APPLE_PAY_ENABLED=true
@@ -394,12 +413,14 @@ APPLE_PAY_ENABLED=true
 ## 📱 Supported Devices & Browsers
 
 ### Devices that Support Apple Pay:
+
 - ✅ iPhone (iPhone 6 and later)
 - ✅ iPad (iPad Pro, iPad Air 2, iPad mini 3 and later)
 - ✅ Mac (with Touch ID or paired iPhone/Apple Watch)
 - ✅ Apple Watch
 
 ### Browsers that Support Apple Pay:
+
 - ✅ Safari on iOS 10.1+
 - ✅ Safari on macOS Sierra+
 - ❌ Chrome, Firefox, Edge (Apple Pay Web not supported)
@@ -409,18 +430,21 @@ APPLE_PAY_ENABLED=true
 ## 🎨 User Experience Guidelines
 
 ### Apple Pay Button:
+
 - Use official Apple Pay button styles
 - Place prominently in checkout flow
 - Show only when Apple Pay is available
 - Use appropriate button type (Buy, Donate, etc.)
 
 ### Payment Sheet:
+
 - Clear merchant name
 - Detailed line items
 - Total amount visible
 - Shipping/billing info when needed
 
 ### Error Handling:
+
 - Clear error messages
 - Fallback payment options
 - Help text for common issues
@@ -435,11 +459,11 @@ In `lib/applepay/config.ts`:
 mock: {
   // Auto-approve payments in mock mode
   autoApprove: true,
-  
+
   // Simulate processing delay (ms)
   simulateDelay: true,
   delayMs: 1500,
-  
+
   // Mock card details shown
   mockCardDetails: {
     network: "visa",
@@ -454,11 +478,13 @@ mock: {
 ## 🔄 Migration from Mock to Production
 
 ### Step 1: Configure Apple Developer Account
+
 - Create Merchant ID
 - Verify domain
 - Generate certificates
 
 ### Step 2: Update Environment Variables
+
 ```bash
 APPLE_PAY_ENABLED=true
 APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
@@ -466,11 +492,13 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 ```
 
 ### Step 3: Deploy
+
 - Push to production
 - Verify environment variables are set
 - Test on Apple device
 
 ### Step 4: Monitor
+
 - Check API logs for validation requests
 - Monitor payment success rates
 - Watch for error patterns
@@ -480,6 +508,7 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 ## 📈 Analytics & Monitoring
 
 ### Track These Metrics:
+
 - ✅ Apple Pay button impressions
 - ✅ Payment sheet show rate
 - ✅ Payment authorization rate
@@ -488,6 +517,7 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 - ✅ Transaction amounts
 
 ### Log These Events:
+
 - Merchant validation requests
 - Payment authorizations
 - Failed payments
@@ -499,15 +529,18 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 ## 🎓 Additional Resources
 
 ### Apple Documentation:
+
 - [Apple Pay Web](https://developer.apple.com/apple-pay/)
 - [Apple Pay JS API](https://developer.apple.com/documentation/apple_pay_on_the_web)
 - [Merchant Identity Certificate](https://help.apple.com/developer-account/#/devb2e62b839)
 
 ### Stripe Documentation:
+
 - [Stripe Apple Pay](https://stripe.com/docs/apple-pay)
 - [Apple Pay with Stripe Issuing](https://stripe.com/docs/issuing/cards/digital-wallets)
 
 ### Testing:
+
 - [Apple Pay Sandbox Testing](https://developer.apple.com/apple-pay/sandbox-testing/)
 - [Stripe Test Cards](https://stripe.com/docs/testing)
 
@@ -516,6 +549,7 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 ## 🎉 Benefits of Apple Pay
 
 ### For Users:
+
 - ✅ One-tap checkout
 - ✅ No need to enter card details
 - ✅ Secure with Face ID/Touch ID
@@ -523,6 +557,7 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 - ✅ Works across devices
 
 ### For Platform:
+
 - ✅ Higher conversion rates
 - ✅ Reduced cart abandonment
 - ✅ Lower fraud rates
@@ -545,17 +580,3 @@ APPLE_PAY_MERCHANT_ID=merchant.com.splitsy
 **Last Updated:** October 10, 2025
 
 **Status:** ✅ Mock mode ready, awaiting Apple Developer credentials
-
-
-
-
-
-
-
-
-
-
-
-
-
-

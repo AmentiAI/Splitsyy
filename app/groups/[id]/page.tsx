@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Button } from "@/components/ui/Button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/Card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { LoadingPage } from "@/components/ui/LoadingSpinner";
 import { Alert } from "@/components/ui/Alert";
@@ -76,13 +83,17 @@ function GroupDetailsPage() {
 
   if (error || !details) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
         <Card className="max-w-md">
           <CardContent className="p-8">
             <Alert variant="error" title="Error Loading Group">
               {error || "Group not found"}
             </Alert>
-            <Button onClick={() => router.push("/dashboard")} className="mt-4" fullWidth>
+            <Button
+              onClick={() => router.push("/dashboard")}
+              className="mt-4"
+              fullWidth
+            >
               Back to Dashboard
             </Button>
           </CardContent>
@@ -97,16 +108,16 @@ function GroupDetailsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+      <header className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => router.push("/dashboard")}
             >
               <svg
-                className="w-5 h-5 mr-2"
+                className="mr-2 h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -125,14 +136,17 @@ function GroupDetailsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Group Header */}
         <div className="mb-8">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">{details.group.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {details.group.name}
+              </h1>
               <p className="mt-2 text-gray-600">
-                Created {formatDate(details.group.createdAt)} • {details.group.currency}
+                Created {formatDate(details.group.createdAt)} •{" "}
+                {details.group.currency}
               </p>
             </div>
             <Badge variant={getRoleColor(details.group.userRole) as any}>
@@ -141,7 +155,7 @@ function GroupDetailsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Members Section */}
           <div className="lg:col-span-1">
             <Card>
@@ -154,13 +168,18 @@ function GroupDetailsPage() {
                   {details.members.map((member) => (
                     <div
                       key={member.userId}
-                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
                     >
                       <div className="flex-1">
-                        <p className="font-medium text-gray-900">{member.name}</p>
+                        <p className="font-medium text-gray-900">
+                          {member.name}
+                        </p>
                         <p className="text-xs text-gray-600">{member.email}</p>
                       </div>
-                      <Badge variant={getRoleColor(member.role) as any} size="sm">
+                      <Badge
+                        variant={getRoleColor(member.role) as any}
+                        size="sm"
+                      >
                         {member.role}
                       </Badge>
                     </div>
@@ -171,7 +190,7 @@ function GroupDetailsPage() {
                 <CardFooter>
                   <Button size="sm" fullWidth variant="outline">
                     <svg
-                      className="w-4 h-4 mr-2"
+                      className="mr-2 h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -192,14 +211,14 @@ function GroupDetailsPage() {
 
           {/* Pools Section */}
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-4 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-gray-900">
                 Pools ({details.pools.length})
               </h2>
               {isOwnerOrAdmin && (
                 <Button>
                   <svg
-                    className="w-5 h-5 mr-2"
+                    className="mr-2 h-5 w-5"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -238,7 +257,7 @@ function GroupDetailsPage() {
                   <EmptyState
                     icon={
                       <svg
-                        className="w-16 h-16"
+                        className="h-16 w-16"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -253,7 +272,9 @@ function GroupDetailsPage() {
                     }
                     title="No pools yet"
                     description="Create a pool to start collecting contributions from group members."
-                    actionLabel={isOwnerOrAdmin ? "Create First Pool" : undefined}
+                    actionLabel={
+                      isOwnerOrAdmin ? "Create First Pool" : undefined
+                    }
                     onAction={isOwnerOrAdmin ? () => {} : undefined}
                   />
                 </CardContent>
@@ -273,17 +294,3 @@ export default function GroupPage() {
     </AuthGuard>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

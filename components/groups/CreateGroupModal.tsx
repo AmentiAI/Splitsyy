@@ -114,17 +114,3 @@ export function CreateGroupModal({
     </Modal>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

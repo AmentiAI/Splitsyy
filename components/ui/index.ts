@@ -1,13 +1,20 @@
 /**
  * UI Component Library
- * 
+ *
  * Reusable components for the Splitsy application
  */
 
 export { Button } from "./Button";
 export type { ButtonProps } from "./Button";
 
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./Card";
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "./Card";
 export type { CardProps } from "./Card";
 
 export { Input } from "./Input";
@@ -33,17 +40,3 @@ export type { EmptyStateProps } from "./EmptyState";
 
 export { ProgressBar } from "./ProgressBar";
 export type { ProgressBarProps } from "./ProgressBar";
-
-
-
-
-
-
-
-
-
-
-
-
-
-

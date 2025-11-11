@@ -1,6 +1,6 @@
 /**
  * Mock Apple Pay Provider
- * 
+ *
  * Simulates Apple Pay interactions for development without Apple credentials
  */
 
@@ -23,7 +23,9 @@ export class MockApplePayProvider {
   /**
    * Validate merchant session (called by Apple Pay JS API)
    */
-  async validateMerchant(validationURL: string): Promise<ApplePayMerchantValidation> {
+  async validateMerchant(
+    validationURL: string
+  ): Promise<ApplePayMerchantValidation> {
     console.log("🍎 [MOCK] Validating Apple Pay merchant:", validationURL);
 
     if (APPLE_PAY_CONFIG.mock.simulateDelay) {
@@ -99,7 +101,9 @@ export class MockApplePayProvider {
           cardDetails: APPLE_PAY_CONFIG.mock.mockCardDetails,
         })
       ).toString("base64"),
-      activationData: Buffer.from(`activation_${Date.now()}`).toString("base64"),
+      activationData: Buffer.from(`activation_${Date.now()}`).toString(
+        "base64"
+      ),
       ephemeralPublicKey: Buffer.from(`ephemeral_key_${Date.now()}`).toString(
         "base64"
       ),
@@ -123,7 +127,9 @@ export class MockApplePayProvider {
   isApplePayAvailable(): boolean {
     // In mock mode, we simulate that Apple Pay is available
     // but note it's mock mode
-    console.log("🍎 [MOCK] Apple Pay availability check - simulating available");
+    console.log(
+      "🍎 [MOCK] Apple Pay availability check - simulating available"
+    );
     return true;
   }
 
@@ -141,17 +147,3 @@ export class MockApplePayProvider {
 
 // Export singleton instance
 export const mockApplePayProvider = new MockApplePayProvider();
-
-
-
-
-
-
-
-
-
-
-
-
-
-

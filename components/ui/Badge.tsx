@@ -16,12 +16,12 @@ export const Badge: React.FC<BadgeProps> = ({
     "inline-flex items-center justify-center font-medium rounded-full";
 
   const variants = {
-    default: "bg-silver-200 text-black",
-    success: "bg-silver-300 text-black",
-    warning: "bg-silver-400 text-black",
-    danger: "bg-black text-white",
-    info: "bg-silver-500 text-white",
-  };
+    default: "bg-brand-green-100 text-brand-green-800",
+    success: "bg-brand-green-200 text-brand-green-800",
+    warning: "bg-brand-blue-100 text-brand-blue-800",
+    danger: "bg-red-600 text-white",
+    info: "bg-brand-blue-200 text-brand-blue-900",
+  } as const;
 
   const sizes = {
     sm: "px-2 py-0.5 text-xs",
@@ -38,16 +38,3 @@ export const Badge: React.FC<BadgeProps> = ({
     </span>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
