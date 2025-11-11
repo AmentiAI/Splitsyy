@@ -1,15 +1,25 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 // Skip husky install in CI/Vercel environments
-if (process.env.CI === "true" || process.env.VERCEL === "1") {
-  console.log("Skipping husky install in CI/Vercel environment");
+// This script runs during npm install, so we need to be very defensive
+const isCI =
+  process.env.CI === "true" ||
+  process.env.VERCEL === "1" ||
+  process.env.VERCEL_ENV ||
+  process.env.NOW_REGION ||
+  !process.env.USER; // Vercel doesn't set USER
+
+if (isCI) {
+  // Exit immediately in CI/Vercel - don't even try to run husky
   process.exit(0);
 }
 
-// Run husky install for local development
+// Only run husky in local development
 const { execSync } = require("child_process");
 try {
-  execSync("husky install", { stdio: "inherit" });
+  execSync("husky install", {
+    stdio: "inherit",
+  });
 } catch {
-  // Silently fail if husky isn't available
+  // Silently fail - this is OK
   process.exit(0);
 }
