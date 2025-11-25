@@ -47,7 +47,7 @@ export async function GET() {
         .select("id, name, email, kyc_status, created_at, updated_at")
         .single();
 
-      if (createError) {
+      if (createError || !newProfile) {
         console.error("Failed to create user profile:", createError);
         return NextResponse.json(
           { error: "Failed to load user profile" },
@@ -59,6 +59,14 @@ export async function GET() {
       console.error("Profile fetch error:", profileError);
       return NextResponse.json(
         { error: "Failed to load user profile", details: profileError.message },
+        { status: 500 }
+      );
+    }
+
+    // Ensure profile exists before using it
+    if (!profile) {
+      return NextResponse.json(
+        { error: "User profile not found" },
         { status: 500 }
       );
     }

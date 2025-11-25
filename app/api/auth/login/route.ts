@@ -129,6 +129,7 @@ export async function POST(request: NextRequest) {
       .select("id, name, kyc_status, created_at")
       .eq("id", authData.user.id)
       .single();
+
     let profile = initialProfile;
 
     // If profile doesn't exist, create it (fallback for users created outside normal flow)
@@ -149,7 +150,7 @@ export async function POST(request: NextRequest) {
         .select("id, name, kyc_status, created_at")
         .single();
 
-      if (createError) {
+      if (createError || !newProfile) {
         console.error("Failed to create user profile:", createError);
         return NextResponse.json(
           { error: "Failed to load user profile" },
@@ -164,6 +165,17 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Ensure profile exists before using it - TypeScript type guard
+    if (!profile) {
+      return NextResponse.json(
+        { error: "User profile not found" },
+        { status: 500 }
+      );
+    }
+
+    // TypeScript now knows profile is not null after the check above
+    const userProfile = profile;
 
     // Log successful login
     await logAuditEvent(
@@ -186,9 +198,9 @@ export async function POST(request: NextRequest) {
         user: {
           id: authData.user.id,
           email: authData.user.email,
-          name: profile.name,
-          kyc_status: profile.kyc_status,
-          created_at: profile.created_at,
+          name: userProfile.name,
+          kyc_status: userProfile.kyc_status,
+          created_at: userProfile.created_at,
           emailConfirmed: authData.user.email_confirmed_at !== null,
         },
         session: {
