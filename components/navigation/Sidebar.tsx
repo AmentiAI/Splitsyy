@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAdmin } from "@/lib/hooks/useAdmin";
-import { getCurrentUser } from "@/lib/auth/utils";
+import { getCurrentUser, signOut } from "@/lib/auth/utils";
 import {
   LayoutDashboard,
   Users,
@@ -54,11 +54,24 @@ const quickActions = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(
     null
   );
   const { isAdmin } = useAdmin();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/auth/login");
+      router.refresh(); // Refresh to clear any cached state
+    } catch (error) {
+      console.error("Sign out error:", error);
+      // Even if there's an error, try to redirect
+      router.push("/auth/login");
+    }
+  };
 
   useEffect(() => {
     async function loadUser() {
@@ -202,7 +215,10 @@ export default function Sidebar() {
             <span className="text-xs text-brand-blue-200/80">v1.0.0</span>
           </div>
         )}
-        <button className="group flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-brand-blue-100/80 transition-colors hover:bg-brand-blue-900/60 hover:text-white">
+        <button
+          onClick={handleSignOut}
+          className="group flex w-full items-center space-x-3 rounded-lg px-3 py-2 text-brand-blue-100/80 transition-colors hover:bg-brand-blue-900/60 hover:text-white"
+        >
           <LogOut className="h-5 w-5 text-brand-blue-200 group-hover:text-white" />
           {!collapsed && <span className="text-sm font-medium">Sign Out</span>}
         </button>

@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { getCurrentUser } from "@/lib/auth/utils";
+import { getCurrentUser, signOut } from "@/lib/auth/utils";
 import {
   LayoutDashboard,
   Users,
@@ -54,6 +54,7 @@ interface MobileSidebarProps {
 
 export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(
     null
   );
@@ -69,6 +70,19 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
     }
     loadUser();
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      onClose(); // Close the mobile sidebar first
+      await signOut();
+      router.push("/auth/login");
+      router.refresh(); // Refresh to clear any cached state
+    } catch (error) {
+      console.error("Sign out error:", error);
+      // Even if there's an error, try to redirect
+      router.push("/auth/login");
+    }
+  };
 
   return (
     <>
@@ -201,7 +215,10 @@ export default function MobileSidebar({ isOpen, onClose }: MobileSidebarProps) {
               </div>
               <span className="text-xs text-brand-blue-200/80">v1.0.0</span>
             </div>
-            <button className="group flex min-h-[48px] w-full items-center space-x-3 rounded-lg px-4 py-3 text-brand-blue-100/80 transition-colors hover:bg-brand-blue-900/60 hover:text-white">
+            <button
+              onClick={handleSignOut}
+              className="group flex min-h-[48px] w-full items-center space-x-3 rounded-lg px-4 py-3 text-brand-blue-100/80 transition-colors hover:bg-brand-blue-900/60 hover:text-white"
+            >
               <LogOut className="h-5 w-5 text-brand-blue-200 group-hover:text-white sm:h-6 sm:w-6" />
               <span className="text-sm font-medium sm:text-base">Sign Out</span>
             </button>
