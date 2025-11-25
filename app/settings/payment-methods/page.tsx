@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Alert } from "@/components/ui/Alert";
 import { AuthGuard } from "@/components/auth/AuthGuard";
+import { AddPaymentMethodModal } from "@/components/payment/AddPaymentMethodModal";
 import { CreditCard, Plus, Trash2, Star, Building } from "lucide-react";
 
 interface PaymentMethod {
@@ -27,6 +28,7 @@ function PaymentMethodsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     fetchPaymentMethods();
@@ -103,7 +105,7 @@ function PaymentMethodsPage() {
     return (
       <DashboardLayout>
         <div className="p-4 sm:p-6 lg:p-8">
-          <div className="text-center py-12">
+          <div className="py-12 text-center">
             <p className="text-gray-600">Loading payment methods...</p>
           </div>
         </div>
@@ -113,14 +115,22 @@ function PaymentMethodsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl p-4 sm:p-6 lg:p-8">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Payment Methods</h1>
-          <p className="text-gray-600">Manage your payment cards and bank accounts</p>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900 sm:text-3xl">
+            Payment Methods
+          </h1>
+          <p className="text-gray-600">
+            Manage your payment cards and bank accounts
+          </p>
         </div>
 
         {success && (
-          <Alert variant="success" className="mb-4" onClose={() => setSuccess("")}>
+          <Alert
+            variant="success"
+            className="mb-4"
+            onClose={() => setSuccess("")}
+          >
             {success}
           </Alert>
         )}
@@ -132,8 +142,8 @@ function PaymentMethodsPage() {
         )}
 
         <div className="mb-6">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
+          <Button onClick={() => setShowAddModal(true)}>
+            <Plus className="mr-2 h-4 w-4" />
             Add Payment Method
           </Button>
         </div>
@@ -142,13 +152,15 @@ function PaymentMethodsPage() {
           {paymentMethods.length === 0 ? (
             <Card className="p-12">
               <div className="text-center">
-                <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No Payment Methods</h3>
-                <p className="text-gray-600 mb-6">
+                <CreditCard className="mx-auto mb-4 h-16 w-16 text-gray-400" />
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                  No Payment Methods
+                </h3>
+                <p className="mb-6 text-gray-600">
                   Add a payment method to use for contributions and payments.
                 </p>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button onClick={() => setShowAddModal(true)}>
+                  <Plus className="mr-2 h-4 w-4" />
                   Add Your First Payment Method
                 </Button>
               </div>
@@ -157,22 +169,22 @@ function PaymentMethodsPage() {
             paymentMethods.map((method) => (
               <Card key={method.id} className="p-6">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-4 flex-1">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <div className="flex flex-1 items-start space-x-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
                       {method.type === "card" ? (
-                        <CreditCard className="w-6 h-6 text-blue-600" />
+                        <CreditCard className="h-6 w-6 text-blue-600" />
                       ) : (
-                        <Building className="w-6 h-6 text-blue-600" />
+                        <Building className="h-6 w-6 text-blue-600" />
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="mb-2 flex items-center space-x-2">
                         <h3 className="font-semibold text-gray-900">
                           {method.type === "card" ? "Card" : "Bank Account"}
                         </h3>
                         {method.is_default && (
                           <Badge className="bg-yellow-100 text-yellow-800">
-                            <Star className="w-3 h-3 mr-1" />
+                            <Star className="mr-1 h-3 w-3" />
                             Default
                           </Badge>
                         )}
@@ -180,18 +192,25 @@ function PaymentMethodsPage() {
                       {method.type === "card" && (
                         <div className="space-y-1">
                           <p className="text-sm text-gray-600">
-                            {method.card_brand && `${method.card_brand.charAt(0).toUpperCase() + method.card_brand.slice(1)} `}
-                            {method.last_four ? `**** ${method.last_four}` : "****"}
+                            {method.card_brand &&
+                              `${method.card_brand.charAt(0).toUpperCase() + method.card_brand.slice(1)} `}
+                            {method.last_four
+                              ? `**** ${method.last_four}`
+                              : "****"}
                           </p>
                           {method.expiry_month && method.expiry_year && (
                             <p className="text-xs text-gray-500">
-                              Expires {method.expiry_month.toString().padStart(2, "0")}/{method.expiry_year}
+                              Expires{" "}
+                              {method.expiry_month.toString().padStart(2, "0")}/
+                              {method.expiry_year}
                             </p>
                           )}
                         </div>
                       )}
                       {method.billing_name && (
-                        <p className="text-sm text-gray-500 mt-1">{method.billing_name}</p>
+                        <p className="mt-1 text-sm text-gray-500">
+                          {method.billing_name}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -202,7 +221,7 @@ function PaymentMethodsPage() {
                         size="sm"
                         onClick={() => handleSetDefault(method.id)}
                       >
-                        <Star className="w-4 h-4 mr-2" />
+                        <Star className="mr-2 h-4 w-4" />
                         Set Default
                       </Button>
                     )}
@@ -211,7 +230,7 @@ function PaymentMethodsPage() {
                       size="sm"
                       onClick={() => handleDelete(method.id)}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -219,6 +238,18 @@ function PaymentMethodsPage() {
             ))
           )}
         </div>
+
+        {/* Add Payment Method Modal */}
+        <AddPaymentMethodModal
+          isOpen={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSuccess={() => {
+            fetchPaymentMethods();
+            setSuccess("Payment method added successfully");
+            setTimeout(() => setSuccess(""), 3000);
+          }}
+          existingPaymentMethodsCount={paymentMethods.length}
+        />
       </div>
     </DashboardLayout>
   );
@@ -231,4 +262,3 @@ export default function PaymentMethods() {
     </AuthGuard>
   );
 }
-

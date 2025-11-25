@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { useAuth } from "@/lib/auth/hooks";
+import { AddPaymentMethodModal } from "@/components/payment/AddPaymentMethodModal";
 import {
   User,
   Mail,
@@ -87,6 +88,7 @@ function SettingsPage() {
 
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [loadingPaymentMethods, setLoadingPaymentMethods] = useState(false);
+  const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
 
   useEffect(() => {
     async function loadSettings() {
@@ -232,8 +234,7 @@ function SettingsPage() {
   };
 
   const handleAddPaymentMethod = () => {
-    // Redirect to payment methods page or open modal
-    window.location.href = "/settings/payment-methods";
+    setShowAddPaymentModal(true);
   };
 
   const tabs = [
@@ -1244,6 +1245,18 @@ function SettingsPage() {
             )}
           </div>
         </div>
+
+        {/* Add Payment Method Modal */}
+        <AddPaymentMethodModal
+          isOpen={showAddPaymentModal}
+          onClose={() => setShowAddPaymentModal(false)}
+          onSuccess={() => {
+            loadPaymentMethods();
+            setSuccess("Payment method added successfully");
+            setTimeout(() => setSuccess(""), 3000);
+          }}
+          existingPaymentMethodsCount={paymentMethods.length}
+        />
       </div>
     </DashboardLayout>
   );
