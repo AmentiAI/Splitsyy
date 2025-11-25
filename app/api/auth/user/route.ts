@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
   try {
     const supabase = await createClient();
 
     // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError) {
       console.error("User fetch error:", userError);
@@ -17,23 +21,44 @@ export async function GET() {
     }
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Not authenticated" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Get user profile
-    const { data: profile, error: profileError } = await supabase
+    // Get user profile - create if it doesn't exist (fallback for users created outside normal flow)
+    const { data: initialProfile, error: profileError } = await supabase
       .from("users")
-      .select("id, name, email, kyc_status, is_platform_admin, created_at, updated_at")
+      .select("id, name, email, kyc_status, created_at, updated_at")
       .eq("id", user.id)
       .single();
+    let profile = initialProfile;
 
-    if (profileError) {
+    // If profile doesn't exist, create it (fallback for users created before profile table existed)
+    if (profileError && profileError.code === "PGRST116") {
+      console.warn("User profile not found, creating profile...");
+      const adminSupabase = createAdminClient();
+      const { data: newProfile, error: createError } = await adminSupabase
+        .from("users")
+        .insert({
+          id: user.id,
+          email: user.email!,
+          name: user.user_metadata?.name || user.email?.split("@")[0] || "User",
+          kyc_status: "not_started",
+        })
+        .select("id, name, email, kyc_status, created_at, updated_at")
+        .single();
+
+      if (createError) {
+        console.error("Failed to create user profile:", createError);
+        return NextResponse.json(
+          { error: "Failed to load user profile" },
+          { status: 500 }
+        );
+      }
+      profile = newProfile;
+    } else if (profileError) {
       console.error("Profile fetch error:", profileError);
       return NextResponse.json(
-        { error: "Failed to load user profile" },
+        { error: "Failed to load user profile", details: profileError.message },
         { status: 500 }
       );
     }
@@ -45,7 +70,6 @@ export async function GET() {
           email: user.email,
           name: profile.name,
           kyc_status: profile.kyc_status,
-          is_platform_admin: profile.is_platform_admin || false,
           created_at: profile.created_at,
           updated_at: profile.updated_at,
           emailConfirmed: user.email_confirmed_at !== null,
@@ -68,13 +92,13 @@ export async function PUT(request: NextRequest) {
     const supabase = await createClient();
 
     // Get current user
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
     if (userError || !user) {
-      return NextResponse.json(
-        { error: "Not authenticated" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
     // Validate and update user profile
@@ -100,7 +124,7 @@ export async function PUT(request: NextRequest) {
     // Get updated profile
     const { data: profile, error: profileError } = await supabase
       .from("users")
-      .select("id, name, email, kyc_status, is_platform_admin, created_at, updated_at")
+      .select("id, name, email, kyc_status, created_at, updated_at")
       .eq("id", user.id)
       .single();
 
@@ -120,7 +144,6 @@ export async function PUT(request: NextRequest) {
           email: user.email,
           name: profile.name,
           kyc_status: profile.kyc_status,
-          is_platform_admin: profile.is_platform_admin || false,
           created_at: profile.created_at,
           updated_at: profile.updated_at,
           emailConfirmed: user.email_confirmed_at !== null,
