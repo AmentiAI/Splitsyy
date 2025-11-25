@@ -167,3 +167,51 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
+
+/**
+ * DELETE /api/auth/user
+ * Delete user account and all associated data
+ */
+export async function DELETE(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const userId = session.user.id;
+
+    // Delete user data from all tables (cascade will handle most)
+    // Delete user settings
+    await supabase.from("user_settings").delete().eq("user_id", userId);
+
+    // Delete user payment methods
+    await supabase.from("user_payment_methods").delete().eq("user_id", userId);
+
+    // Delete user verification
+    await supabase.from("user_verification").delete().eq("user_id", userId);
+
+    // Delete user profile (this will cascade to groups, etc.)
+    await supabase.from("users").delete().eq("id", userId);
+
+    // Delete auth user (requires admin client)
+    const adminSupabase = createAdminClient();
+    await adminSupabase.auth.admin.deleteUser(userId);
+
+    return NextResponse.json({
+      message: "Account deleted successfully",
+    });
+  } catch (error) {
+    console.error("Account deletion error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete account" },
+      { status: 500 }
+    );
+  }
+}
