@@ -123,3 +123,4 @@ COMMENT ON COLUMN public.user_verification.id_number_encrypted IS 'Encrypted ID 
 COMMENT ON COLUMN public.user_verification.provider_response IS 'Full response from third-party verification provider';
 COMMENT ON COLUMN public.user_verification.admin_notes IS 'Admin notes and comments about verification';
 
+

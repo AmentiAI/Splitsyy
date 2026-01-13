@@ -86,3 +86,4 @@ COMMENT ON COLUMN public.user_settings.notifications IS 'JSONB object with notif
 COMMENT ON COLUMN public.user_settings.security IS 'JSONB object with security settings';
 COMMENT ON COLUMN public.user_settings.preferences IS 'JSONB object with user preferences (language, currency, etc.)';
 
+
