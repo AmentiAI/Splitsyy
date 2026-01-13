@@ -1,16 +1,33 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+// Helper function to clean and validate Supabase URL
+function cleanSupabaseUrl(url: string | undefined): string {
+  if (!url) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_URL is not set");
+  }
+
+  // Remove double equals if present (common .env mistake)
+  const cleaned = url.replace(/^=+/, "").trim();
+
+  // Validate URL format
+  if (!cleaned.startsWith("http://") && !cleaned.startsWith("https://")) {
+    throw new Error(
+      `Invalid Supabase URL format: "${cleaned}". Expected format: https://your-project-id.supabase.co`
+    );
+  }
+
+  return cleaned;
+}
+
 export async function createClient() {
   const cookieStore = await cookies();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl = cleanSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    throw new Error(
-      "Missing Supabase environment variables. Please check NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY"
-    );
+  if (!supabaseAnonKey) {
+    throw new Error("NEXT_PUBLIC_SUPABASE_ANON_KEY is not set");
   }
 
   return createServerClient(supabaseUrl, supabaseAnonKey, {
@@ -32,4 +49,3 @@ export async function createClient() {
     },
   });
 }
-
