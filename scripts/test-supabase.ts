@@ -6,7 +6,7 @@ import { URL } from "url";
 // Load environment variables
 config({ path: ".env.local" });
 
-let supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+let supabaseUrl: string | undefined = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 // Fix common issues with URL format
@@ -28,10 +28,16 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
+// At this point, TypeScript knows supabaseUrl is defined, but we need to assert it
+const validatedUrl: string = supabaseUrl;
+
 // Validate URL format
-if (!supabaseUrl.startsWith("http://") && !supabaseUrl.startsWith("https://")) {
+if (
+  !validatedUrl.startsWith("http://") &&
+  !validatedUrl.startsWith("https://")
+) {
   console.error("❌ Invalid Supabase URL format");
-  console.error("   Found:", supabaseUrl);
+  console.error("   Found:", validatedUrl);
   console.error("   Expected format: https://your-project-id.supabase.co");
   console.error(
     "\n💡 Check your .env.local file - make sure there's only ONE equals sign:"
@@ -40,7 +46,7 @@ if (!supabaseUrl.startsWith("http://") && !supabaseUrl.startsWith("https://")) {
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(validatedUrl, supabaseKey);
 
 // Helper function to test network connectivity using Node.js https
 function testNetworkConnection(url: string, apiKey: string): Promise<boolean> {
@@ -78,15 +84,21 @@ function testNetworkConnection(url: string, apiKey: string): Promise<boolean> {
 }
 
 async function testConnection() {
+  // Ensure we have validated URL and key
+  if (!validatedUrl || !supabaseKey) {
+    console.error("❌ Missing required credentials");
+    return false;
+  }
+
   console.log("🔍 Testing Supabase connection...\n");
-  console.log("URL:", supabaseUrl);
-  console.log("Key:", supabaseKey?.substring(0, 20) + "...\n");
+  console.log("URL:", validatedUrl);
+  console.log("Key:", supabaseKey.substring(0, 20) + "...\n");
 
   try {
     // Test 0: Check if we can reach Supabase at all
     console.log("📡 Test 0: Network connectivity check...");
     try {
-      await testNetworkConnection(supabaseUrl, supabaseKey);
+      await testNetworkConnection(validatedUrl, supabaseKey);
       console.log("✅ Network connection OK\n");
     } catch (networkError: any) {
       console.error("❌ Network connection failed:", networkError.message);
